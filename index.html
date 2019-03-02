@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Hello World12</title>
+        <style>
+            body {
+                align-content: center;
+                text-align: center
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Hello World!</h2>
+        <input type="text" id="input" value="" placeholder="Email" />
+        <input type="text" id="inputName" value="" placeholder="Name" />
+        <button onclick="send();">Click me</button>
+        <p id="output">
+            
+        </p>
+        <script>
+                var outputElement = document.getElementById( "output" );
+                var inputElement = document.getElementById( "input" );
+                var inputElementName = document.getElementById( "inputName" );
+                var socket = new WebSocket( "ws://" + window.location.host + "/ws" );
+    
+                socket.onopen =function () {
+                    outputElement.innerHTML += "Status: Connected\n"
+                };
+    
+                socket.onmessage = function (e) {
+                    msg = JSON.parse(e.data);
+                    console.log(e.data);
+                    outputElement.innerHTML += "</br><br>Email: " + msg.email + " Name:" + msg.username + "\n";
+                };
+    
+                function send() {
+                    str = JSON.stringify({
+                                    email: inputElement.value,
+                                    username: inputElementName.value
+                                })
+                    socket.send( str );
+                    inputElement.value = "";
+                }
+            </script>
+    </body>
+</html>
