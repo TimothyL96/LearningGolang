@@ -1,45 +1,51 @@
 package main
 
 import (
-	"./Company"
-	. "fmt"
+	"fmt"
 	"log"
+
+	"./Company"
 )
 
+// DataSetsStorage struct
 type DataSetsStorage struct {
-	Companies[] *Company.Company
+	Companies []*Company.Company
 }
 
+// DataSets abc
 var DataSets DataSetsStorage
 
-func (DataSetsStorage DataSetsStorage) PrintAllDataSets() {
+// PrintAllDataSets prints
+func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 	// Print all company data sets
-	for _, ds := range DataSetsStorage.Companies{
-		Println("Data set printing: ", ds)
-		
+	for _, ds := range DataSetsStorage.Companies {
+		fmt.Println("Data set printing: ", ds)
+
 		for _, m := range ds.Machines {
-			Println("Machine printing: ", m)
+			fmt.Println("Machine printing: ", m)
 		}
 	}
 }
 
-func CreateDataSet(DataSetKind string) interface{} {
+// CreateDataSet creates
+func createDataSet(DataSetKind string) interface{} {
 	var DataSet interface{}
-	
+
 	switch DataSetKind {
-		case "Company":
-			DataSet = NewCompany()
-		default:
-			log.Fatal("No such data set kind found!")
+	case "Company":
+		DataSet = newCompany()
+	default:
+		log.Fatal("No such data set kind found!")
 	}
-	
+
 	return DataSet
 }
 
-func NewCompany() Company.Company {
+// NewCompany company
+func newCompany() Company.Company {
 	company := Company.Company{
-		Version:1,
+		Version: 1,
 	}
-	
+
 	return company
 }

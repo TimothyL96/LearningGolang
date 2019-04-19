@@ -1,11 +1,13 @@
 package main
 
 import (
-	// . "fmt"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
 
+	"./Company"
 	"github.com/gorilla/websocket"
 )
 
@@ -90,77 +92,50 @@ func main() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 
-	// // Get input to create new data set
-	// // var DataSetKind string
-	// // Println("Enter a data set kind to be created:")
-	// // Scanln(&DataSetKind)
+	// Get input to create new data set
+	// var DataSetKind string
+	// Println("Enter a data set kind to be created:")
+	// Scanln(&DataSetKind)
 
-	// // ConvertDataSet(DataSetKind)
+	// ConvertDataSet(DataSetKind)
 
-	// // Println("Back to main")
-
-	// // http.HandleFunc("/", func(writer http.ResponseWriter, r *http.Request) {
-	// // 	Fprintf(writer, "Hello, %q", html.EscapeString(r.URL.Path))
-	// // })
-
-	// http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request){
-	// 	Fprintf(w, "Hi")
-	// })
-
-	// http.HandleFunc("/increment", incrementCounter)
-
-	// // http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// // 	http.ServeFile(w, r, r.URL.Path[1:])
-	// // })
-
-	// http.Handle("/", http.FileServer(http.Dir("./Company")))
-	// http.ListenAndServe(":8081", nil)
+	// Println("Back to main")
 }
 
-// func incrementCounter(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path != "/increment" {
-// 		panic("Not found 404!!")
-// 	}
+func convertDataSet(DataSetKind string) {
+	defer recoverPanic()
 
-// 	mutex.Lock()
-// 	counter++
-// 	Fprint(w, strconv.Itoa(counter))
-// 	mutex.Unlock()
-// }
-// func ConvertDataSet(DataSetKind string) {
-// 	defer Recover()
+	// Server startup - Create the data set from the input
+	DataSetInstance, succeed := (createDataSet(DataSetKind)).(Company.Company)
 
-// 	// Server startup - Create the data set from the input
-// 	DataSetInstance, succeed := (CreateDataSet(DataSetKind)).(Company.Company)
+	if !succeed {
+		panic(errors.New("type assertion failed").Error())
+	} else {
+		DataSets.Companies = append(DataSets.Companies, &DataSetInstance)
+		testCompany(&DataSetInstance)
+	}
+}
 
-// 	if !succeed {
-// 		panic(errors.New("type assertion failed").Error())
-// 	} else {
-// 		DataSets.Companies = append(DataSets.Companies, &DataSetInstance)
-// 		TestCompany(&DataSetInstance)
-// 	}
-// }
+func recoverPanic() {
+	r := recover()
+	if r != nil {
+		fmt.Println("Recovered! from: ", r)
+	}
+}
 
-// func Recover() {
-// 	r := recover()
-// 	if r != nil {
-// 		Println("Recovered! from: ", r)
-// 	}
-// }
+func testCompany(company *Company.Company) {
+	// Create a machine
+	m1 := company.CreateMachine("Golang first machine", 'T')
+	m2 := company.CreateMachine("Golang second machine", 'C')
 
-// func TestCompany(company *Company.Company) {
-// 	// Create a machine
-// 	m1 := company.CreateMachine("Golang first machine", 'T')
-// 	m2 := company.CreateMachine("Golang second machine", 'C')
+	m1.CreateTask('A')
+	m1.CreateTask('B')
+	m1.CreateTask('C')
+	m2.CreateTask('D')
+	m2.CreateTask('E')
 
-// 	m1.CreateTask('A')
-// 	m1.CreateTask('B')
-// 	m1.CreateTask('C')
-// 	m2.CreateTask('D')
-// 	m2.CreateTask('E')
+	fmt.Printf("%p\n", company)
+	fmt.Printf("%+v\n", company.Machines[0].Tasks)
 
-// 	Printf("%p\n", company)
-// 	Printf("%+v\n", company.Machines[0].Tasks)
-
-// 	DataSets.PrintAllDataSets()
-// }
+	DataSets.printAllDataSets()
+}
