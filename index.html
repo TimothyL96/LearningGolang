@@ -8,18 +8,14 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="send()">
         <h2>Hello World!</h2>
-        <input type="text" id="input" value="" placeholder="Email" />
-        <input type="text" id="inputName" value="" placeholder="Name" />
         <button onclick="send();">Click me</button>
         <p id="output">
             
         </p>
         <script>
                 var outputElement = document.getElementById( "output" );
-                var inputElement = document.getElementById( "input" );
-                var inputElementName = document.getElementById( "inputName" );
                 var socket = new WebSocket( "ws://" + window.location.host + "/ws" );
     
                 socket.onopen =function () {
@@ -27,18 +23,19 @@
                 };
     
                 socket.onmessage = function (e) {
-                    msg = JSON.parse(e.data);
+                    msg = e.data;
                     console.log(e.data);
-                    outputElement.innerHTML += "</br><br>Email: " + msg.email + " Name:" + msg.username + "\n";
+                    outputElement.innerHTML += msg + "\n";
                 };
     
                 function send() {
-                    str = JSON.stringify({
-                                    email: inputElement.value,
-                                    username: inputElementName.value
-                                })
+                    str = "hello!";
                     socket.send( str );
                     inputElement.value = "";
+                }
+
+                window.onbeforeunload = function () {
+                    socket.close();
                 }
             </script>
     </body>
