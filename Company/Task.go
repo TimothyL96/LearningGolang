@@ -1,8 +1,12 @@
-package Company
+package company
 
-type task struct {
-	TaskType byte
-	
+// Task struct
+type Task struct {
+	TaskType      byte
+	Duration      int
+	StartDateTime int
+	EndDateTime   int
+
 	// Owner
-	Owner *machine
+	Owner *Machine
 }

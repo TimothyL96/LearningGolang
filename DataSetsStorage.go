@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 
-	"./Company"
+	"./company"
 )
 
 // DataSetsStorage struct
 type DataSetsStorage struct {
-	Companies []*Company.Company
+	Companies []*company.Company
 }
 
 // DataSets abc
@@ -19,7 +20,7 @@ var DataSets DataSetsStorage
 func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 	// Print all company data sets
 	for _, ds := range DataSetsStorage.Companies {
-		fmt.Println("Data set printing: ", ds)
+		fmt.Println("Data set (company) printing: ", ds)
 
 		for _, m := range ds.Machines {
 			fmt.Println("Machine printing: ", m)
@@ -30,9 +31,9 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 // CreateDataSet creates
 func createDataSet(DataSetKind string) interface{} {
 	var DataSet interface{}
-
-	switch DataSetKind {
-	case "Company":
+	
+	switch strings.ToLower(DataSetKind) {
+	case "company":
 		DataSet = newCompany()
 	default:
 		log.Fatal("No such data set kind found!")
@@ -42,8 +43,8 @@ func createDataSet(DataSetKind string) interface{} {
 }
 
 // NewCompany company
-func newCompany() Company.Company {
-	company := Company.Company{
+func newCompany() company.Company {
+	company := company.Company{
 		Version: 1,
 	}
 

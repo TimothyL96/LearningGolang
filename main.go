@@ -1,11 +1,14 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
 	"time"
 
+	"./company"
 	"github.com/gorilla/websocket"
 )
 
@@ -67,61 +70,62 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	//Create a simple file server
-	fs := http.FileServer(http.Dir("./"))
-	http.Handle("/", fs)
+	// fs := http.FileServer(http.Dir("./"))
+	// http.Handle("/", fs)
 
-	http.HandleFunc("/ws", handleConnections)
+	// http.HandleFunc("/ws", handleConnections)
 
-	log.Println("http server stated on :8081")
-	err := http.ListenAndServe(":8081", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	// log.Println("http server stated on :8081")
+	// err := http.ListenAndServe(":8081", nil)
+	// if err != nil {
+	// 	log.Fatal("ListenAndServe: ", err)
+	// }
 
 	// Get input to create new data set
-	// var DataSetKind string
-	// Println("Enter a data set kind to be created:")
-	// Scanln(&DataSetKind)
+	var DataSetKind string
+	fmt.Println("Enter a data set kind to be created (company):")
+	fmt.Scanln(&DataSetKind)
 
-	// ConvertDataSet(DataSetKind)
+	convertDataSet(DataSetKind)
 
-	// Println("Back to main")
+	fmt.Println("Back to main")
 }
 
-// func convertDataSet(DataSetKind string) {
-// 	defer recoverPanic()
+func convertDataSet(DataSetKind string) {
+	defer recoverPanic()
 
-// 	// Server startup - Create the data set from the input
-// 	DataSetInstance, succeed := (createDataSet(DataSetKind)).(Company.Company)
+	// Server startup - Create the data set from the input using type assertion
+	// From here, we are assuming the dataset or string entered is "company"
+	DataSetInstance, succeed := (createDataSet(DataSetKind)).(company.Company)
 
-// 	if !succeed {
-// 		panic(errors.New("type assertion failed").Error())
-// 	} else {
-// 		DataSets.Companies = append(DataSets.Companies, &DataSetInstance)
-// 		testCompany(&DataSetInstance)
-// 	}
-// }
+	if !succeed {
+		panic(errors.New("type assertion failed").Error())
+	} else {
+		DataSets.Companies = append(DataSets.Companies, &DataSetInstance)
+		testCompany(&DataSetInstance)
+	}
+}
 
-// func recoverPanic() {
-// 	r := recover()
-// 	if r != nil {
-// 		fmt.Println("Recovered! from: ", r)
-// 	}
-// }
+func recoverPanic() {
+	r := recover()
+	if r != nil {
+		fmt.Println("Recovered! from: ", r)
+	}
+}
 
-// func testCompany(company *Company.Company) {
-// 	// Create a machine
-// 	m1 := company.CreateMachine("Golang first machine", 'T')
-// 	m2 := company.CreateMachine("Golang second machine", 'C')
+func testCompany(company *company.Company) {
+	// Create a machine
+	m1 := company.CreateMachine("Golang first machine", 'T')
+	m2 := company.CreateMachine("Golang second machine", 'C')
 
-// 	m1.CreateTask('A')
-// 	m1.CreateTask('B')
-// 	m1.CreateTask('C')
-// 	m2.CreateTask('D')
-// 	m2.CreateTask('E')
+	m1.CreateTask('A', 2, 0)
+	m1.CreateTask('B', 2, 3)
+	m1.CreateTask('C', 2, 5)
+	m2.CreateTask('D', 2, 7)
+	m2.CreateTask('E', 2, 9)
 
-// 	fmt.Printf("%p\n", company)
-// 	fmt.Printf("%+v\n", company.Machines[0].Tasks)
-
-// 	DataSets.printAllDataSets()
-// }
+	fmt.Printf("First: \n%p\n\n", company)
+	fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
+	fmt.Println("Print all dataset:")
+	DataSets.printAllDataSets()
+}
