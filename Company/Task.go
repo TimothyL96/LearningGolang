@@ -30,7 +30,7 @@ func (task *Task) SetStartDateTime() {
 	// 	value = task.PreviousTask.EndDateTime
 	// }
 
-	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime)
+	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime, task.Machine.UpdateTasksSorting)
 }
 
 // SetDuration xaxa

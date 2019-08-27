@@ -40,7 +40,7 @@ func (company *Company) SetDateTime(dateTime int) {
 func Guard(check interface{}, defaultValue interface{}) interface{} {
 
 	if !reflect.ValueOf(check).IsNil() {
-		return reflect.ValueOf(check).Elem().Convert(
+		return reflect.ValueOf(check).Convert(
 			reflect.TypeOf(reflect.ValueOf(check).Elem()),
 		)
 	}
@@ -49,10 +49,23 @@ func Guard(check interface{}, defaultValue interface{}) interface{} {
 }
 
 // CalcFunc xaxa
-func CalcFunc(currentValue interface{}, newValue interface{}, funcToRun func()) {
+func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
 	if currentValue != newValue {
 		reflect.ValueOf(currentValue).Elem().Set(reflect.ValueOf(newValue))
 
-		funcToRun()
+		for _, funcToRun := range funcToRuns {
+			funcToRun()
+		}
+	}
+}
+
+// CalcFuncRelation xaxa
+func CalcFuncRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
+	if currentValue != newValue {
+		reflect.ValueOf(currentValue).Elem().Set(reflect.ValueOf(newValue).Elem())
+
+		for _, funcToRun := range funcToRuns {
+			funcToRun()
+		}
 	}
 }

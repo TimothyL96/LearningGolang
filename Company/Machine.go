@@ -1,5 +1,9 @@
 package company
 
+import (
+	"sort"
+)
+
 // Machine struct
 type Machine struct {
 	MachineName string
@@ -32,4 +36,28 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 	// Re-sort the tasks for machine
 
 	return task
+}
+
+// UpdateTasksSorting xaxa
+func (machine *Machine) UpdateTasksSorting() {
+	sort.SliceStable(machine.Tasks, func(i, j int) bool {
+		return machine.Tasks[i].StartDateTime < machine.Tasks[j].StartDateTime
+	})
+
+	for k, t := range machine.Tasks {
+		if k == 0 {
+			machine.FirstTask = t
+		} else {
+			value := machine.Tasks[k-1]
+			CalcFuncRelation(t.PreviousTask, value, t.SetStartDateTime)
+		}
+
+		if k == len(machine.Tasks)-1 {
+			machine.FirstTask = t
+			continue
+		} else {
+			value := machine.Tasks[k+1]
+			CalcFuncRelation(t.NextTask, value)
+		}
+	}
 }
