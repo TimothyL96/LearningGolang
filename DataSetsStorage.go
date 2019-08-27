@@ -24,6 +24,10 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 
 		for _, m := range ds.Machines {
 			fmt.Println("Machine printing: ", m)
+
+			for _, t := range m.Tasks {
+				fmt.Println("Task printing: ", t)
+			}
 		}
 	}
 }
@@ -46,6 +50,7 @@ func createDataSet(DataSetKind string) interface{} {
 func newCompany() company.Company {
 	company := company.Company{
 		Version: 1,
+		DateTime: 0,
 	}
 
 	return company

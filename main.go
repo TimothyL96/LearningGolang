@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"runtime/debug"
 
 	"./company"
 	"github.com/gorilla/websocket"
@@ -110,6 +111,7 @@ func recoverPanic() {
 	r := recover()
 	if r != nil {
 		fmt.Println("Recovered! from: ", r)
+		fmt.Println(string(debug.Stack()))
 	}
 }
 
@@ -118,14 +120,27 @@ func testCompany(company *company.Company) {
 	m1 := company.CreateMachine("Golang first machine", 'T')
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
-	m1.CreateTask('A', 2, 0)
-	m1.CreateTask('B', 2, 3)
-	m1.CreateTask('C', 2, 5)
-	m2.CreateTask('D', 2, 7)
-	m2.CreateTask('E', 2, 9)
+	m1.CreateTask('A', 2)
+	m1.CreateTask('B', 2)
+	m1.CreateTask('C', 2)
+	m2.CreateTask('D', 2)
+	m2.CreateTask('E', 2)
 
-	fmt.Printf("First: \n%p\n\n", company)
-	fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
-	fmt.Println("Print all dataset:")
-	DataSets.printAllDataSets()
+	// fmt.Printf("First: \n%p\n\n", company)
+	// fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
+	// fmt.Println("Print all dataset:")
+	// DataSets.printAllDataSets()
+	for k, m := range company.Machines {
+		fmt.Println("***********************\nMachine index: ", k)
+		fmt.Println("Machine Name: ", string(m.MachineName))
+		fmt.Println("Machine Type: ", string(m.MachineType))
+		
+		for kt, t := range m.Tasks {
+			fmt.Println("#####\nTask index: ", kt)
+			fmt.Println("Task type: ", string(t.TaskType));
+			fmt.Println("Duration: ", t.Duration);
+			fmt.Println("Start date time: ", t.StartDateTime);
+			fmt.Println("End date time: ", t.EndDateTime);
+		}
+	}
 }
