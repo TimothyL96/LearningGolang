@@ -19,6 +19,9 @@ func (company *Company) CreateMachine(MachineName string, MachineType byte) *Mac
 		MachineName: MachineName,
 		MachineType: MachineType,
 		Company:     company,
+		Tasks:       nil,
+		FirstTask:   nil,
+		LastTask:    nil,
 	}
 
 	// Add it to company unsorted

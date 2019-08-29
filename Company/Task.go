@@ -23,12 +23,7 @@ func (task *Task) SetStartDateTime() {
 		return
 	}
 
-	value := Guard(task.GetPreviousTask().GetEndDateTime(), task.Machine.Company.DateTime).(int)
-	// value := task.Machine.Company.DateTime
-
-	// if task.PreviousTask != nil {
-	// 	value = task.PreviousTask.EndDateTime
-	// }
+	value := Guard(task.PreviousTask.EndDateTime, task.Machine.Company.DateTime).(int)
 
 	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime, task.Machine.UpdateTasksSorting)
 }
@@ -48,25 +43,7 @@ func (task *Task) SetEndDateTime() {
 
 	value := task.StartDateTime + task.Duration
 
-	CalcFunc(&(task.EndDateTime), value, task.GetNextTask().SetStartDateTime)
-}
-
-// GetPreviousTask xaxa
-func (task *Task) GetPreviousTask() *Task {
-	if task == nil || task.PreviousTask == nil {
-		return nil
-	}
-
-	return task.PreviousTask
-}
-
-// GetNextTask xaxa
-func (task *Task) GetNextTask() *Task {
-	if task == nil || task.NextTask == nil {
-		return nil
-	}
-
-	return task.NextTask
+	CalcFunc(&(task.EndDateTime), value, task.NextTask.SetStartDateTime)
 }
 
 // GetEndDateTime xaxa
