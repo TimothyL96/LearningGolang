@@ -45,20 +45,20 @@ func (machine *Machine) UpdateTasksSorting() {
 		return machine.Tasks[i].StartDateTime < machine.Tasks[j].StartDateTime
 	})
 
-	// for k, t := range machine.Tasks {
-	// 	if k == 0 {
-	// 		machine.FirstTask = t
-	// 	} else {
-	// 		value := machine.Tasks[k-1]
-	// 		CalcFuncRelation(t.PreviousTask, value, t.SetStartDateTime)
-	// 	}
+	for k, t := range machine.Tasks {
+		if k == 0 {
+			machine.FirstTask = t
+		} else {
+			value := machine.Tasks[k-1]
+			CalcFuncRelation(t.PreviousTask, value, t.SetStartDateTime)
+		}
 
-	// 	if k == len(machine.Tasks)-1 {
-	// 		machine.FirstTask = t
-	// 		continue
-	// 	} else {
-	// 		value := machine.Tasks[k+1]
-	// 		CalcFuncRelation(t.NextTask, value)
-	// 	}
-	// }
+		if k == len(machine.Tasks)-1 {
+			machine.FirstTask = t
+			continue
+		} else {
+			value := machine.Tasks[k+1]
+			CalcFuncRelation(t.NextTask, value)
+		}
+	}
 }
