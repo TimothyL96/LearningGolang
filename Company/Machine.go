@@ -39,26 +39,27 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 	return task
 }
 
-// UpdateTasksSorting xaxa
-func (machine *Machine) UpdateTasksSorting() {
+// RelationUpdateTasksSorting xaxa
+func (machine *Machine) RelationUpdateTasksSorting() {
+	// Sort tasks based on StartDateTime
 	sort.SliceStable(machine.Tasks, func(i, j int) bool {
 		return machine.Tasks[i].StartDateTime < machine.Tasks[j].StartDateTime
 	})
 
+	// Set machine first and last task, and every task's previous and next task
 	for k, t := range machine.Tasks {
 		if k == 0 {
 			machine.FirstTask = t
 		} else {
 			value := machine.Tasks[k-1]
-			CalcFuncRelation(t.PreviousTask, value, t.SetStartDateTime)
+			t.PreviousTask = CalcFuncRelation(t.PreviousTask, value, t.SetStartDateTime).(*Task)
 		}
 
 		if k == len(machine.Tasks)-1 {
-			machine.FirstTask = t
-			continue
+			machine.LastTask = t
 		} else {
 			value := machine.Tasks[k+1]
-			CalcFuncRelation(t.NextTask, value)
+			t.NextTask = CalcFuncRelation(t.NextTask, value).(*Task)
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package company
 
 import (
+	"errors"
 	"reflect"
 )
 
@@ -41,10 +42,12 @@ func (company *Company) SetDateTime(dateTime int) {
 
 // Guard Set value to 2nd parameter if first is invalid
 func Guard(check interface{}, defaultValue interface{}) interface{} {
+	// Get value of check
+	checkValue := reflect.ValueOf(check)
 
-	if !reflect.ValueOf(check).IsNil() {
-		return reflect.ValueOf(check).Convert(
-			reflect.TypeOf(reflect.ValueOf(check).Elem()),
+	if !checkValue.IsNil() {
+		return checkValue.Convert(
+			reflect.TypeOf(checkValue.Elem()),
 		)
 	}
 
@@ -53,9 +56,21 @@ func Guard(check interface{}, defaultValue interface{}) interface{} {
 
 // CalcFunc xaxa
 func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
-	if currentValue != newValue {
-		reflect.ValueOf(currentValue).Elem().Set(reflect.ValueOf(newValue))
+	// If currentValue is null, panic
+	if currentValue == nil {
+		panic(errors.New("currentValue is null").Error())
+	}
 
+	// Get the current pointer
+	currentValuePtr := reflect.ValueOf(currentValue)
+
+	// TODO check the Kind for a struct and compare keys instead
+	// reflect.TypeOf(currentValue).Kind() == reflect.Struct
+
+	if currentValuePtr.Elem() != newValue {
+		currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
+
+		// Run all the functions to recalculate
 		for _, funcToRun := range funcToRuns {
 			funcToRun()
 		}
@@ -63,12 +78,13 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 }
 
 // CalcFuncRelation xaxa
-func CalcFuncRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
-	if currentValue != newValue {
-		reflect.ValueOf(currentValue).Elem().Set(reflect.ValueOf(newValue).Elem())
+func CalcFuncRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) interface{} {
 
-		for _, funcToRun := range funcToRuns {
-			funcToRun()
-		}
+	if reflect.ValueOf(currentValue).IsNil() {
+		currentValue = reflect.New(reflect.TypeOf(currentValue))
 	}
+
+	CalcFunc(currentValue, newValue, funcToRuns...)
+
+	return currentValue
 }
