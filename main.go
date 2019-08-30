@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"runtime/debug"
 	"sync"
 	"time"
-	"runtime/debug"
 
-	"./company"
+	"github.com/ttimt/GolangWebSocket/company"
 	"github.com/gorilla/websocket"
 )
 
@@ -136,14 +136,14 @@ func testCompany(company *company.Company) {
 		fmt.Println("Machine key: ", m.Key.ToString())
 		fmt.Println("Machine Name: ", string(m.MachineName))
 		fmt.Println("Machine Type: ", string(m.MachineType))
-		
+
 		for kt, t := range m.Tasks {
 			fmt.Println("#####\nTask index: ", kt)
-			fmt.Println("Task key: ", t.Key.ToString());
-			fmt.Println("Task type: ", string(t.TaskType));
-			fmt.Println("Duration: ", t.Duration);
-			fmt.Println("Start date time: ", t.StartDateTime);
-			fmt.Println("End date time: ", t.EndDateTime);
+			fmt.Println("Task key: ", t.Key.ToString())
+			fmt.Println("Task type: ", string(t.TaskType))
+			fmt.Println("Duration: ", t.Duration)
+			fmt.Println("Start date time: ", t.StartDateTime)
+			fmt.Println("End date time: ", t.EndDateTime)
 		}
 	}
 }
