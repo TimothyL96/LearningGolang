@@ -122,28 +122,49 @@ func testCompany(company *company.Company) {
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
 	firsttask := m1.CreateTask('A', 2)
-	for i := 1; i < 1000; i++ {
-		m1.CreateTask('G', rand.Int() % 10000)
+	t := firsttask
+	for i := 1; i < 10; i++ {
+		t = m1.CreateTask('G', rand.Int() % 10000)
 	}
 	m2.CreateTask('D', 2)
-	m2.CreateTask('E', 2)
+	m2.CreateTask('E', 7)
+	m2.CreateTask('E', 3)
 
-	firsttask.SetDuration(5)
+	// Print out last task of machine1
+	// Change the duration
+	// Then print out the task again
+	fmt.Println("FIRST ###########")
+	fmt.Println("Task key: ", t.Key.ToString())
+	fmt.Println("Task type: ", string(t.TaskType))
+	fmt.Println("Duration: ", t.Duration)
+	fmt.Println("Start date time: ", t.StartDateTime)
+	fmt.Println("End date time: ", t.EndDateTime)
+	fmt.Println("Previous task: ", t.PreviousTask.GetKey())
+	fmt.Println("Next task: ", t.NextTask.GetKey())
+	t.SetDuration(10)
+	fmt.Println("SECOND ############")
+	fmt.Println("Task key: ", t.Key.ToString())
+	fmt.Println("Task type: ", string(t.TaskType))
+	fmt.Println("Duration: ", t.Duration)
+	fmt.Println("Start date time: ", t.StartDateTime)
+	fmt.Println("End date time: ", t.EndDateTime)
+	fmt.Println("Previous task: ", t.PreviousTask.GetKey())
+	fmt.Println("Next task: ", t.NextTask.GetKey())
 
 	// fmt.Printf("First: \n%p\n\n", company)
 	// fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
 	// fmt.Println("Print all dataset:")
 	// DataSets.printAllDataSets()
-	for k, m := range company.Machines {
-		fmt.Println("***********************\nMachine index: ", k)
+	for _, m := range company.Machines {
+		fmt.Println("***************************************")
 		fmt.Println("Machine key: ", m.Key.ToString())
-		fmt.Println("Machine Name: ", string(m.MachineName))
+		fmt.Println("Machine Name: ", m.MachineName)
 		fmt.Println("Machine Type: ", string(m.MachineType))
 		fmt.Println("Machine First Task: ", m.FirstTask.GetKey())
 		fmt.Println("Machine Last Task: ", m.LastTask.GetKey())
 
-		for kt, t := range m.Tasks {
-			fmt.Println("#####\nTask index: ", kt)
+		for _, t := range m.Tasks {
+			fmt.Println("******")
 			fmt.Println("Task key: ", t.Key.ToString())
 			fmt.Println("Task type: ", string(t.TaskType))
 			fmt.Println("Duration: ", t.Duration)

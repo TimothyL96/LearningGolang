@@ -31,17 +31,17 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 		StartDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 	
+	// Set first task
+	if len(machine.Tasks) == 0 {
+		machine.FirstTask = task
+	}
+
 	if machine.LastTask != nil {
 		// Set previous task
 		task.PreviousTask = machine.LastTask
 		
 		// Set previous next task
 		machine.LastTask.NextTask = task
-	}
-
-	// Set first task
-	if len(machine.Tasks) == 0 {
-		machine.FirstTask = task
 	}
 
 	// Set last task
