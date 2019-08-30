@@ -90,17 +90,6 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 	}
 }
 
-// CalcRelation xaxa
-func CalcRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) interface{} {
-	if reflect.ValueOf(currentValue).IsNil() {
-		currentValue = reflect.New(reflect.TypeOf(currentValue))
-	}
-
-	CalcFunc(&currentValue, newValue, funcToRuns...)
-
-	return &currentValue
-}
-
 // ToString for key
 func (key Key) ToString() string {
 	return strconv.Itoa(key.SiteKey) + "." + strconv.Itoa(key.MajorKey) + "." + strconv.Itoa(key.MinorKey)

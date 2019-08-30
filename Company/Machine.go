@@ -54,14 +54,14 @@ func (machine *Machine) RelationTaskUpdateSorting() {
 			machine.FirstTask = t
 		} else {
 			value := machine.Tasks[k-1]
-			t.PreviousTask = CalcRelation(t.PreviousTask, value, t.SetStartDateTime).(*Task)
+			CalcFunc(t.PreviousTask, value, t.SetStartDateTime)
 		}
 
 		if k == len(machine.Tasks)-1 {
 			machine.LastTask = t
 		} else {
 			value := machine.Tasks[k+1]
-			t.NextTask = CalcRelation(t.NextTask, value).(*Task)
+			CalcFunc(t.NextTask, value)
 		}
 	}
 }

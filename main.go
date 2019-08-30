@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ttimt/GolangWebSocket/company"
 	"github.com/gorilla/websocket"
+	"github.com/ttimt/GolangWebSocket/company"
 )
 
 var counter int
@@ -135,7 +135,7 @@ func testCompany(company *company.Company) {
 		fmt.Println("***********************\nMachine index: ", k)
 		fmt.Println("Machine key: ", m.Key.ToString())
 		fmt.Println("Machine Name: ", string(m.MachineName))
-		fmt.Println("Machine Type: ", string(m.MachineType))
+		log.Println("Machine Type: ", string(m.MachineType))
 
 		for kt, t := range m.Tasks {
 			fmt.Println("#####\nTask index: ", kt)
