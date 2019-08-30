@@ -73,25 +73,15 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 		panic(errors.New("currentValue is null").Error())
 	}
 
+	// Get the current pointer
 	currentValuePtr := reflect.ValueOf(currentValue)
 
-	// Get the current pointer
-	if currentValuePtr.Kind() == reflect.Struct && reflect.TypeOf(newValue).Kind() == reflect.Struct {
-		firstValue := currentValuePtr.Field(0)
-		secondValue := reflect.ValueOf(newValue).Field(0)
-
-		if firstValue != secondValue {
-			currentValuePtr.Set(reflect.ValueOf(newValue))
-		}
-	} else if currentValuePtr.Kind() != reflect.Struct && reflect.TypeOf(newValue).Kind() != reflect.Struct {
-		if currentValuePtr != newValue {
+	if currentValuePtr.Elem() != newValue {
+		if reflect.TypeOf(newValue).Kind() != reflect.Ptr {
 			currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
+		} else {
+			currentValuePtr.Elem().Set(reflect.ValueOf(newValue).Elem())
 		}
-	} else {
-		println(currentValuePtr.Kind())
-		println(reflect.TypeOf(newValue).Kind())
-
-		panic(errors.New("Panic: CalcFunc mixed non struct and struct").Error())
 	}
 
 	// Run all the functions to recalculate
@@ -100,16 +90,15 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 	}
 }
 
-// CalcFuncRelation xaxa
-func CalcFuncRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) interface{} {
-
+// CalcRelation xaxa
+func CalcRelation(currentValue interface{}, newValue interface{}, funcToRuns ...func()) interface{} {
 	if reflect.ValueOf(currentValue).IsNil() {
 		currentValue = reflect.New(reflect.TypeOf(currentValue))
 	}
 
-	CalcFunc(currentValue, newValue, funcToRuns...)
+	CalcFunc(&currentValue, newValue, funcToRuns...)
 
-	return currentValue
+	return &currentValue
 }
 
 // ToString for key
