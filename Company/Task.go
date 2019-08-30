@@ -16,8 +16,6 @@ type Task struct {
 	NextTask     *Task
 }
 
-// *** Procedurally attributes have SET method with parameters, while declarative attributes have no parameters
-
 // SetStartDateTime xaxa
 func (task *Task) SetStartDateTime() {
 	if task == nil {
@@ -26,14 +24,14 @@ func (task *Task) SetStartDateTime() {
 
 	value := Guard(task.PreviousTask.GetEndDateTime(), task.Machine.Company.DateTime).(int)
 
-	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime, task.Machine.RelationTaskUpdateSorting)
+	CalcFunc(&(task.StartDateTime), &value, task.SetEndDateTime)//, task.Machine.RelationTaskUpdateSorting)
 }
 
 // SetDuration xaxa
 func (task *Task) SetDuration(duration int) {
 	value := duration
 
-	CalcFunc(&(task.Duration), value, task.SetEndDateTime)
+	CalcFunc(&(task.Duration), &value, task.SetEndDateTime)
 }
 
 // SetEndDateTime xaxa
@@ -44,7 +42,7 @@ func (task *Task) SetEndDateTime() {
 
 	value := task.StartDateTime + task.Duration
 
-	CalcFunc(&(task.EndDateTime), value, task.NextTask.SetStartDateTime)
+	CalcFunc(&(task.EndDateTime), &value, task.NextTask.SetStartDateTime)
 }
 
 // GetEndDateTime xaxa
@@ -54,4 +52,13 @@ func (task *Task) GetEndDateTime() *int {
 	}
 
 	return &task.EndDateTime
+}
+
+// GetKey xaxa
+func (task *Task) GetKey() *Key {
+	if task == nil {
+		return nil
+	}
+
+	return &task.Key
 }

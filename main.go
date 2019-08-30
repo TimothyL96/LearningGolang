@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"sync"
 	"time"
+	"math/rand"
 
 	"github.com/gorilla/websocket"
 	"github.com/ttimt/GolangWebSocket/company"
@@ -120,11 +121,14 @@ func testCompany(company *company.Company) {
 	m1 := company.CreateMachine("Golang first machine", 'T')
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
-	m1.CreateTask('A', 2)
-	m1.CreateTask('B', 2)
-	m1.CreateTask('C', 2)
+	firsttask := m1.CreateTask('A', 2)
+	for i := 1; i < 1000; i++ {
+		m1.CreateTask('G', rand.Int() % 10000)
+	}
 	m2.CreateTask('D', 2)
 	m2.CreateTask('E', 2)
+
+	firsttask.SetDuration(5)
 
 	// fmt.Printf("First: \n%p\n\n", company)
 	// fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
@@ -135,8 +139,8 @@ func testCompany(company *company.Company) {
 		fmt.Println("Machine key: ", m.Key.ToString())
 		fmt.Println("Machine Name: ", string(m.MachineName))
 		fmt.Println("Machine Type: ", string(m.MachineType))
-		fmt.Println("Machine First Task: ", string(m.FirstTask.Key.ToString()))
-		fmt.Println("Machine Last Task: ", string(m.LastTask.Key.ToString()))
+		fmt.Println("Machine First Task: ", m.FirstTask.GetKey())
+		fmt.Println("Machine Last Task: ", m.LastTask.GetKey())
 
 		for kt, t := range m.Tasks {
 			fmt.Println("#####\nTask index: ", kt)
@@ -145,6 +149,8 @@ func testCompany(company *company.Company) {
 			fmt.Println("Duration: ", t.Duration)
 			fmt.Println("Start date time: ", t.StartDateTime)
 			fmt.Println("End date time: ", t.EndDateTime)
+			fmt.Println("Previous task: ", t.PreviousTask.GetKey())
+			fmt.Println("Next task: ", t.NextTask.GetKey())
 		}
 	}
 }

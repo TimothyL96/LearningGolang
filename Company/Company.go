@@ -53,6 +53,8 @@ func (company *Company) SetDateTime(dateTime int) {
 
 // Guard Set value to 2nd parameter if first is invalid
 func Guard(check interface{}, defaultValue interface{}) interface{} {
+	// Check if parameter 1 and 2 have the same type
+
 	// Get value of check
 	checkValue := reflect.ValueOf(check)
 
@@ -63,22 +65,21 @@ func Guard(check interface{}, defaultValue interface{}) interface{} {
 	return defaultValue
 }
 
+// Check if loop in function cause less calculation
+
 // CalcFunc xaxa
 func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
 	// Get the current pointer
 	currentValuePtr := reflect.ValueOf(currentValue)
+	newValuePtr := reflect.ValueOf(newValue)
 
-	if currentValuePtr.Elem() != newValue {
-		if reflect.TypeOf(newValue).Kind() != reflect.Ptr {
-			currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
-		} else {
-			currentValuePtr.Elem().Set(reflect.ValueOf(newValue).Elem())
+	if currentValuePtr.Elem().Interface() != newValuePtr.Elem().Interface() {
+		currentValuePtr.Elem().Set(newValuePtr.Elem())
+
+		// Run all the functions to recalculate
+		for _, funcToRun := range funcToRuns {
+			funcToRun()
 		}
-	}
-
-	// Run all the functions to recalculate
-	for _, funcToRun := range funcToRuns {
-		funcToRun()
 	}
 }
 
