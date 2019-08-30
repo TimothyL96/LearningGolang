@@ -131,11 +131,12 @@ func testCompany(company *company.Company) {
 	// fmt.Println("Print all dataset:")
 	// DataSets.printAllDataSets()
 	for k, m := range company.Machines {
-		println(company.GetNewKey().MinorKey)
 		fmt.Println("***********************\nMachine index: ", k)
 		fmt.Println("Machine key: ", m.Key.ToString())
 		fmt.Println("Machine Name: ", string(m.MachineName))
 		fmt.Println("Machine Type: ", string(m.MachineType))
+		fmt.Println("Machine First Task: ", string(m.FirstTask.Key.ToString()))
+		fmt.Println("Machine Last Task: ", string(m.LastTask.Key.ToString()))
 
 		for kt, t := range m.Tasks {
 			fmt.Println("#####\nTask index: ", kt)

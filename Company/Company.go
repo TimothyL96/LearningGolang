@@ -1,7 +1,6 @@
 package company
 
 import (
-	"errors"
 	"reflect"
 	"strconv"
 )
@@ -58,9 +57,7 @@ func Guard(check interface{}, defaultValue interface{}) interface{} {
 	checkValue := reflect.ValueOf(check)
 
 	if !checkValue.IsNil() {
-		return checkValue.Convert(
-			reflect.TypeOf(checkValue.Elem()),
-		)
+		return checkValue.Elem().Interface()
 	}
 
 	return defaultValue
@@ -68,11 +65,6 @@ func Guard(check interface{}, defaultValue interface{}) interface{} {
 
 // CalcFunc xaxa
 func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func()) {
-	// If currentValue is null, panic
-	if currentValue == nil {
-		panic(errors.New("currentValue is null").Error())
-	}
-
 	// Get the current pointer
 	currentValuePtr := reflect.ValueOf(currentValue)
 

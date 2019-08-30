@@ -30,11 +30,11 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 		NextTask:     nil,
 	}
 
-	// Run declarative functions here
-	task.SetStartDateTime() // omit SetEndDateTime
-
 	// Add task to this Machine list
 	machine.Tasks = append(machine.Tasks, task)
+
+	// Run declarative functions here
+	task.SetStartDateTime() // omit SetEndDateTime
 
 	// Re-sort the tasks for machine
 
@@ -47,21 +47,28 @@ func (machine *Machine) RelationTaskUpdateSorting() {
 	sort.SliceStable(machine.Tasks, func(i, j int) bool {
 		return machine.Tasks[i].StartDateTime < machine.Tasks[j].StartDateTime
 	})
-
+	
 	// Set machine first and last task, and every task's previous and next task
 	for k, t := range machine.Tasks {
+		println("Machine ", t.Machine.Key.ToString() ,"Task key: ", t.Key.ToString())
 		if k == 0 {
 			machine.FirstTask = t
 		} else {
-			value := machine.Tasks[k-1]
-			CalcFunc(t.PreviousTask, value, t.SetStartDateTime)
+			// value := machine.Tasks[k-1]
+			if t.PreviousTask == nil {
+				t.PreviousTask = &Task{}
+			}
+			// CalcFunc(t.PreviousTask, value, t.SetStartDateTime)
 		}
 
 		if k == len(machine.Tasks)-1 {
 			machine.LastTask = t
 		} else {
-			value := machine.Tasks[k+1]
-			CalcFunc(t.NextTask, value)
+			// value := machine.Tasks[k+1]
+			if t.NextTask == nil {
+				t.NextTask = &Task{}
+			}
+			// CalcFunc(t.NextTask, value)
 		}
 	}
 }
