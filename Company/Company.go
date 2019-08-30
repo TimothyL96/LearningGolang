@@ -88,6 +88,9 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 			currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
 		}
 	} else {
+		println(currentValuePtr.Kind())
+		println(reflect.TypeOf(newValue).Kind())
+
 		panic(errors.New("Panic: CalcFunc mixed non struct and struct").Error())
 	}
 
