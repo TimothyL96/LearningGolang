@@ -26,7 +26,7 @@ func (task *Task) SetStartDateTime() {
 
 	value := Guard(task.PreviousTask.GetEndDateTime(), task.Machine.Company.DateTime).(int)
 
-	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime, task.Machine.RelationUpdateTasksSorting)
+	CalcFunc(&(task.StartDateTime), value, task.SetEndDateTime, task.Machine.RelationTaskUpdateSorting)
 }
 
 // SetDuration xaxa
