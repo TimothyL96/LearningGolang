@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"runtime/debug"
 	"sync"
@@ -135,7 +134,7 @@ func testCompany(company *company.Company) {
 		fmt.Println("***********************\nMachine index: ", k)
 		fmt.Println("Machine key: ", m.Key.ToString())
 		fmt.Println("Machine Name: ", string(m.MachineName))
-		log.Println("Machine Type: ", string(m.MachineType))
+		fmt.Println("Machine Type: ", string(m.MachineType))
 
 		for kt, t := range m.Tasks {
 			fmt.Println("#####\nTask index: ", kt)
