@@ -51,6 +51,7 @@ func newCompany() company.Company {
 	company := company.Company{
 		Version: 1,
 		DateTime: 0,
+		SiteKey: 12345,
 	}
 
 	return company

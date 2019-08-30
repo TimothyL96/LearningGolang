@@ -6,6 +6,7 @@ import (
 
 // Machine struct
 type Machine struct {
+	Key         Key
 	MachineName string
 	MachineType byte
 
@@ -21,6 +22,7 @@ type Machine struct {
 // CreateTask method
 func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 	task := &Task{
+		Key:          machine.Company.GetNewKey(),
 		TaskType:     TaskType,
 		Duration:     Duration,
 		Machine:      machine,

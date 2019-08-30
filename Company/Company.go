@@ -3,20 +3,32 @@ package company
 import (
 	"errors"
 	"reflect"
+	"strconv"
 )
 
 // Company struct
 type Company struct {
-	Version  int
-	DateTime int
+	Version         int
+	DateTime        int
+	SiteKey         int // Should be changed to key and store current major and minor key globally
+	MajorKeyCurrent int
+	MinorKeyCurrent int
 
 	// Owning objects
 	Machines []*Machine
 }
 
+// Key struct
+type Key struct {
+	SiteKey  int
+	MajorKey int
+	MinorKey int
+}
+
 // CreateMachine method
 func (company *Company) CreateMachine(MachineName string, MachineType byte) *Machine {
 	machine := &Machine{
+		Key:         company.GetNewKey(),
 		MachineName: MachineName,
 		MachineType: MachineType,
 		Company:     company,
@@ -61,19 +73,27 @@ func CalcFunc(currentValue interface{}, newValue interface{}, funcToRuns ...func
 		panic(errors.New("currentValue is null").Error())
 	}
 
-	// Get the current pointer
 	currentValuePtr := reflect.ValueOf(currentValue)
 
-	// TODO check the Kind for a struct and compare keys instead
-	// reflect.TypeOf(currentValue).Kind() == reflect.Struct
+	// Get the current pointer
+	if currentValuePtr.Kind() == reflect.Struct && reflect.TypeOf(newValue).Kind() == reflect.Struct {
+		firstValue := currentValuePtr.Field(0)
+		secondValue := reflect.ValueOf(newValue).Field(0)
 
-	if currentValuePtr.Elem() != newValue {
-		currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
-
-		// Run all the functions to recalculate
-		for _, funcToRun := range funcToRuns {
-			funcToRun()
+		if firstValue != secondValue {
+			currentValuePtr.Set(reflect.ValueOf(newValue))
 		}
+	} else if currentValuePtr.Kind() != reflect.Struct && reflect.TypeOf(newValue).Kind() != reflect.Struct {
+		if currentValuePtr != newValue {
+			currentValuePtr.Elem().Set(reflect.ValueOf(newValue))
+		}
+	} else {
+		panic(errors.New("Panic: CalcFunc mixed non struct and struct").Error())
+	}
+
+	// Run all the functions to recalculate
+	for _, funcToRun := range funcToRuns {
+		funcToRun()
 	}
 }
 
@@ -87,4 +107,22 @@ func CalcFuncRelation(currentValue interface{}, newValue interface{}, funcToRuns
 	CalcFunc(currentValue, newValue, funcToRuns...)
 
 	return currentValue
+}
+
+// ToString for key
+func (key Key) ToString() string {
+	return strconv.Itoa(key.SiteKey) + "." + strconv.Itoa(key.MajorKey) + "." + strconv.Itoa(key.MinorKey)
+}
+
+// GetNewKey xaxa
+func (company *Company) GetNewKey() Key {
+	key := Key{
+		SiteKey:  company.SiteKey,
+		MajorKey: company.MajorKeyCurrent,
+		MinorKey: company.MinorKeyCurrent,
+	}
+
+	company.MinorKeyCurrent++
+
+	return key
 }

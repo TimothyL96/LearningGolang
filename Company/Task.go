@@ -2,6 +2,7 @@ package company
 
 // Task struct
 type Task struct {
+	Key           Key
 	TaskType      byte
 	Duration      int
 	StartDateTime int
