@@ -1,57 +1,82 @@
 package company
 
 import (
+	"errors"
 	"sort"
 )
 
 // Machine struct
 type Machine struct {
-	Key         Key
-	MachineName string
-	MachineType byte
+	key         Key
+	machineName string
+	machineType byte
 
 	// Owner
 	Company *Company
 
 	// Owning objects
-	Tasks     []*Task
-	FirstTask *Task
-	LastTask  *Task
+	Tasks     []*taskBase
+	FirstTask *taskBase
+	LastTask  *taskBase
 }
 
 // CreateTask method
-func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
-	task := &Task{
-		Key:           machine.Company.GetNewKey(),
-		TaskType:      TaskType,
-		Duration:      Duration,
+func (machine *Machine) CreateTask(duration int) Task {
+	taskBase := &taskBase{
+		key:           machine.Company.GetNewKey(),
+		taskType:      machine.machineType,
+		duration:      duration,
 		Machine:       machine,
 		PreviousTask:  nil,
 		NextTask:      nil,
-		StartDateTime: -1, // Hack, need a method to initialize all functions after instance created
+		startDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 
 	// Set first task
 	if len(machine.Tasks) == 0 {
-		machine.FirstTask = task
+		machine.FirstTask = taskBase
 	}
 
 	if machine.LastTask != nil {
 		// Set previous task
-		task.PreviousTask = machine.LastTask
+		taskBase.PreviousTask = machine.LastTask
 
 		// Set previous next task
-		machine.LastTask.NextTask = task
+		machine.LastTask.NextTask = taskBase
 	}
 
 	// Set last task
-	machine.LastTask = task
+	machine.LastTask = taskBase
 
 	// Add task to this Machine list
-	machine.Tasks = append(machine.Tasks, task)
+	machine.Tasks = append(machine.Tasks, taskBase)
 
 	// Run declarative functions here
-	task.SetStartDateTime() // omit SetEndDateTime
+	taskBase.setStartDateTime() // omit SetEndDateTime
+
+	// Store interface taskBase
+	var task Task
+
+	switch machine.machineType {
+	case 'R':
+		task = &taskRolling{
+			taskBase: taskBase,
+		}
+	case 'C':
+		task = &taskCutting{
+			taskBase: taskBase,
+		}
+	case 'F':
+		task = &taskFolding{
+			taskBase: taskBase,
+		}
+	case 'P':
+		task = &taskPackaging{
+			taskBase: taskBase,
+		}
+	default:
+		panic(errors.New("Machine has invalid type:" + string(machine.machineType)).Error())
+	}
 
 	return task
 }
@@ -60,7 +85,7 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 func (machine *Machine) RelationTaskUpdateSorting() {
 	// Sort tasks based on StartDateTime
 	sort.SliceStable(machine.Tasks, func(i, j int) bool {
-		return machine.Tasks[i].StartDateTime < machine.Tasks[j].StartDateTime
+		return machine.Tasks[i].startDateTime < machine.Tasks[j].startDateTime
 	})
 
 	// Set machine first and last task, and every task's previous and next task
@@ -70,9 +95,9 @@ func (machine *Machine) RelationTaskUpdateSorting() {
 		} else {
 			value := machine.Tasks[k-1]
 			if t.PreviousTask == nil {
-				t.PreviousTask = &Task{}
+				t.PreviousTask = &taskBase{}
 			}
-			CalcFunc(t.PreviousTask, value, t.SetStartDateTime)
+			CalcFunc(t.PreviousTask, value, t.setStartDateTime)
 		}
 
 		if k == len(machine.Tasks)-1 {
@@ -80,7 +105,7 @@ func (machine *Machine) RelationTaskUpdateSorting() {
 		} else {
 			value := machine.Tasks[k+1]
 			if t.NextTask == nil {
-				t.NextTask = &Task{}
+				t.NextTask = &taskBase{}
 			}
 			CalcFunc(t.NextTask, value)
 		}

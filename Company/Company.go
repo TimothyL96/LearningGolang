@@ -27,9 +27,9 @@ type Key struct {
 // CreateMachine method
 func (company *Company) CreateMachine(MachineName string, MachineType byte) *Machine {
 	machine := &Machine{
-		Key:         company.GetNewKey(),
-		MachineName: MachineName,
-		MachineType: MachineType,
+		key:         company.GetNewKey(),
+		machineName: MachineName,
+		machineType: MachineType,
 		Company:     company,
 		Tasks:       nil,
 		FirstTask:   nil,
@@ -47,7 +47,7 @@ func (company *Company) SetDateTime(dateTime int) {
 	company.DateTime = dateTime
 
 	for _, x := range company.Machines {
-		x.FirstTask.SetStartDateTime()
+		x.FirstTask.setStartDateTime()
 	}
 }
 

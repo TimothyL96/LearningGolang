@@ -128,20 +128,20 @@ func testCompany(company *company.Company) {
 	m1 := company.CreateMachine("Golang first machine", 'T')
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
-	firsttask := m1.CreateTask('A', 2)
+	firsttask := m1.CreateTask(2)
 	t := firsttask
 	for i := 1; i < 10; i++ {
-		t = m1.CreateTask('G', rand.Int()%10000)
+		t = m1.CreateTask(rand.Int() % 10000)
 	}
-	m2.CreateTask('D', 2)
-	m2.CreateTask('E', 7)
-	m2.CreateTask('E', 3)
+	m2.CreateTask(2)
+	m2.CreateTask(7)
+	m2.CreateTask(3)
 
 	// Print out last task of machine1
 	// Change the duration
 	// Then print out the task again
 	fmt.Println("FIRST ###########")
-	fmt.Println("Task key: ", t.Key.ToString())
+	fmt.Println("Task key: ", t.GetKey().ToString())
 	fmt.Println("Task type: ", string(t.TaskType))
 	fmt.Println("Duration: ", t.Duration)
 	fmt.Println("Start date time: ", t.StartDateTime)

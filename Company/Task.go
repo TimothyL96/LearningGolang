@@ -1,64 +1,85 @@
 package company
 
-// Task struct
-type Task struct {
-	Key           Key
-	TaskType      byte
-	Duration      int
-	StartDateTime int
-	EndDateTime   int // function
+// Task interface xaxa
+type Task interface {
+	SetDuration(int)
+	GetEndDateTime() *int
+	GetKey() *Key
+}
+
+// Task base struct
+type taskBase struct {
+	key           Key
+	taskType      byte
+	duration      int
+	startDateTime int
+	endDateTime   int // function
 
 	// Machine
 	Machine *Machine
 
 	// Previous task
-	PreviousTask *Task
-	NextTask     *Task
+	PreviousTask *taskBase
+	NextTask     *taskBase
 }
 
-// SetStartDateTime xaxa
-func (task *Task) SetStartDateTime() {
+type taskCutting struct {
+	*taskBase
+}
+
+type taskRolling struct {
+	*taskBase
+}
+
+type taskFolding struct {
+	*taskBase
+}
+
+type taskPackaging struct {
+	*taskBase
+}
+
+func (task *taskBase) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
 	value := Guard(task.PreviousTask.GetEndDateTime(), task.Machine.Company.DateTime).(int)
 
-	CalcFunc(&(task.StartDateTime), &value, task.SetEndDateTime) //, task.Machine.RelationTaskUpdateSorting)
+	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime) //, task.Machine.RelationTaskUpdateSorting)
 }
 
 // SetDuration xaxa
-func (task *Task) SetDuration(duration int) {
+func (task *taskBase) SetDuration(duration int) {
 	value := duration
 
-	CalcFunc(&(task.Duration), &value, task.SetEndDateTime)
+	CalcFunc(&(task.duration), &value, task.setEndDateTime)
 }
 
-// SetEndDateTime xaxa
-func (task *Task) SetEndDateTime() {
+func (task *taskBase) setEndDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := task.StartDateTime + task.Duration
+	value := task.startDateTime + task.duration
 
-	CalcFunc(&(task.EndDateTime), &value, task.NextTask.SetStartDateTime)
+	CalcFunc(&(task.endDateTime), &value, task.NextTask.setStartDateTime)
 }
 
 // GetEndDateTime xaxa
-func (task *Task) GetEndDateTime() *int {
+func (task *taskBase) GetEndDateTime() *int {
 	if task == nil {
 		return nil
 	}
 
-	return &task.EndDateTime
+	return &task.endDateTime
 }
 
 // GetKey xaxa
-func (task *Task) GetKey() *Key {
+func (task *taskBase) GetKey() *Key {
 	if task == nil {
 		return nil
 	}
 
-	return &task.Key
+	return &task.key
 }
