@@ -3,83 +3,75 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
-	"net/http"
-	"os"
 	"runtime/debug"
-	"sync"
-	"time"
 
-	"github.com/gorilla/websocket"
-	"github.com/therecipe/qt/widgets"
 	"github.com/ttimt/GolangWebSocket/company"
-	"github.com/ttimt/GolangWebSocket/ui"
 )
 
-var counter int
-var c client
+// var counter int
+// var c client
 
-type client struct {
-	m       sync.Mutex
-	clients []*websocket.Conn
-}
+// type client struct {
+// 	m       sync.Mutex
+// 	clients []*websocket.Conn
+// }
 
-// Upgraded: Upgrade normal HTTP connection to WebSocket
-var upgrader = websocket.Upgrader{}
+// // Upgraded: Upgrade normal HTTP connection to WebSocket
+// var upgrader = websocket.Upgrader{}
 
-func handleConnections(w http.ResponseWriter, r *http.Request) {
-	// Upgrade initial GET request to a web socket
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+// func handleConnections(w http.ResponseWriter, r *http.Request) {
+// Upgrade initial GET request to a web socket
+// 	ws, err := upgrader.Upgrade(w, r, nil)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	// Make sure we close the connection when the function returns
-	defer ws.Close()
+// 	// Make sure we close the connection when the function returns
+// 	defer ws.Close()
 
-	c.clients = append(c.clients, ws)
+// 	c.clients = append(c.clients, ws)
 
-	// Infinite loop
-	for {
-		// Read in a new message as JSON and map it to a Message object
-		_, m, err := ws.ReadMessage()
+// 	// Infinite loop
+// 	for {
+// 		// Read in a new message as JSON and map it to a Message object
+// 		_, m, err := ws.ReadMessage()
 
-		if err != nil {
-			if !websocket.IsCloseError(err, websocket.CloseNormalClosure,
-				websocket.CloseGoingAway,
-				websocket.CloseNoStatusReceived) {
-				log.Println("ReadConnection:", err)
-			} else {
-				log.Println("Connection closed")
-			}
-			break
-		} else {
-			// println("ReadMessage succeeded:", string(b), time.Now().Unix())
+// 		if err != nil {
+// 			if !websocket.IsCloseError(err, websocket.CloseNormalClosure,
+// 				websocket.CloseGoingAway,
+// 				websocket.CloseNoStatusReceived) {
+// 				log.Println("ReadConnection:", err)
+// 			} else {
+// 				log.Println("Connection closed")
+// 			}
+// 			break
+// 		} else {
+// 			// println("ReadMessage succeeded:", string(b), time.Now().Unix())
 
-			// c.m.Lock()
-			for _, client := range c.clients {
-				err := client.WriteMessage(websocket.TextMessage, m)
-				if err != nil {
-					log.Println("Write Connection:", err)
-					break
-				} else {
-					println("WriteMessage succeeded:", time.Now().Unix())
-				}
-			}
-			// c.m.Unlock()
-		}
-	}
-}
+// 			// c.m.Lock()
+// 			for _, client := range c.clients {
+// 				err := client.WriteMessage(websocket.TextMessage, m)
+// 				if err != nil {
+// 					log.Println("Write Connection:", err)
+// 					break
+// 				} else {
+// 					println("WriteMessage succeeded:", time.Now().Unix())
+// 				}
+// 			}
+// 			// c.m.Unlock()
+// 		}
+// 	}
+// }
 
 func main() {
 	// *********** Test QT Golang GUI
-	app := widgets.NewQApplication(len(os.Args), os.Args)
+	// app := widgets.NewQApplication(len(os.Args), os.Args)
 
-	// NewTestForm().Show()
-	ui.NewMainWindow().Show()
+	// // NewTestForm().Show()
+	// ui.NewMainWindow().Show()
 
-	app.Exec()
+	// app.Exec()
 	// End Test QT Golang GUI
 
 	// *********** Golang Gorilla WebSocket
@@ -98,13 +90,13 @@ func main() {
 
 	// *********** QTQ declarative calculation
 	// Get input to create new data set
-	// var DataSetKind string
-	// fmt.Println("Enter a data set kind to be created (company):")
-	// fmt.Scanln(&DataSetKind)
+	var DataSetKind string
+	fmt.Println("Enter a data set kind to be created (company):")
+	fmt.Scanln(&DataSetKind)
 
-	// convertDataSet(DataSetKind)
+	convertDataSet(DataSetKind)
 
-	// fmt.Println("Back to main")
+	fmt.Println("Back to main")
 	// End QTQ declarative calculation
 }
 
