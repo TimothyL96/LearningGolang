@@ -4,14 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"os"
 	"runtime/debug"
 	"sync"
 	"time"
-	"math/rand"
 
 	"github.com/gorilla/websocket"
+	"github.com/therecipe/qt/widgets"
 	"github.com/ttimt/GolangWebSocket/company"
+	"github.com/ttimt/GolangWebSocket/ui"
 )
 
 var counter int
@@ -70,8 +73,17 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// *********** Test QT Golang GUI
+	app := widgets.NewQApplication(len(os.Args), os.Args)
 
-	//Create a simple file server
+	// NewTestForm().Show()
+	ui.NewMainWindow().Show()
+
+	app.Exec()
+	// End Test QT Golang GUI
+
+	// *********** Golang Gorilla WebSocket
+	// Create a simple file server
 	// fs := http.FileServer(http.Dir("./"))
 	// http.Handle("/", fs)
 
@@ -82,15 +94,18 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal("ListenAndServe: ", err)
 	// }
+	// End Golang Gorilla WebSocket
 
+	// *********** QTQ declarative calculation
 	// Get input to create new data set
-	var DataSetKind string
-	fmt.Println("Enter a data set kind to be created (company):")
-	fmt.Scanln(&DataSetKind)
+	// var DataSetKind string
+	// fmt.Println("Enter a data set kind to be created (company):")
+	// fmt.Scanln(&DataSetKind)
 
-	convertDataSet(DataSetKind)
+	// convertDataSet(DataSetKind)
 
-	fmt.Println("Back to main")
+	// fmt.Println("Back to main")
+	// End QTQ declarative calculation
 }
 
 func convertDataSet(DataSetKind string) {
@@ -124,7 +139,7 @@ func testCompany(company *company.Company) {
 	firsttask := m1.CreateTask('A', 2)
 	t := firsttask
 	for i := 1; i < 10; i++ {
-		t = m1.CreateTask('G', rand.Int() % 10000)
+		t = m1.CreateTask('G', rand.Int()%10000)
 	}
 	m2.CreateTask('D', 2)
 	m2.CreateTask('E', 7)

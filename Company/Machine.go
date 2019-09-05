@@ -22,15 +22,15 @@ type Machine struct {
 // CreateTask method
 func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 	task := &Task{
-		Key:          machine.Company.GetNewKey(),
-		TaskType:     TaskType,
-		Duration:     Duration,
-		Machine:      machine,
-		PreviousTask: nil,
-		NextTask:     nil,
+		Key:           machine.Company.GetNewKey(),
+		TaskType:      TaskType,
+		Duration:      Duration,
+		Machine:       machine,
+		PreviousTask:  nil,
+		NextTask:      nil,
 		StartDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
-	
+
 	// Set first task
 	if len(machine.Tasks) == 0 {
 		machine.FirstTask = task
@@ -39,7 +39,7 @@ func (machine *Machine) CreateTask(TaskType byte, Duration int) *Task {
 	if machine.LastTask != nil {
 		// Set previous task
 		task.PreviousTask = machine.LastTask
-		
+
 		// Set previous next task
 		machine.LastTask.NextTask = task
 	}

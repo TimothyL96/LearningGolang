@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "E:\\Files\\entreprenuer\\awesomeProject",
+            "program": "C:\\Users\\Timothy\\Go\\src\\github.com\\ttimt\\GolangWebSocket",
             "env": {},
             "args": []
         }
