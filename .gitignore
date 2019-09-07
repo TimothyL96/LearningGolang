@@ -1,4 +1,3 @@
 /.vscode/launch.json
-**/.idea/workspace.xml
-**/.idea/tasks.xml
+/idea/
 *.exe
