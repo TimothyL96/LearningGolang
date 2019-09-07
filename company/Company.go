@@ -66,6 +66,21 @@ func (company *Company) CreateKnifeSetting(numberOfCut, color int) *KnifeSetting
 	return knifeSetting
 }
 
+// CreateOrder creates an order owned by the company
+func (company *Company) CreateOrder(ID, color, quantity, dueDate int) *Order {
+	order := &Order{
+		key:          keyConfiguration.NewKey(),
+		ID:           ID,
+		color:        color,
+		quantity:     quantity,
+		dueDate:      dueDate,
+		company:      company,
+		knifeSetting: nil,
+	}
+
+	return order
+}
+
 // SetDateTime sets the date time for the company
 func (company *Company) SetDateTime(dateTime int) {
 	company.dateTime = dateTime
