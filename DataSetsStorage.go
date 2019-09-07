@@ -22,10 +22,10 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 	for _, ds := range DataSetsStorage.Companies {
 		fmt.Println("Data set (company) printing: ", ds)
 
-		for _, m := range ds.Machines {
+		for _, m := range ds.GetAllMachines() {
 			fmt.Println("Machine printing: ", m)
 
-			for _, t := range m.Tasks {
+			for _, t := range m.GetAllTasks() {
 				fmt.Println("Task printing: ", t)
 			}
 		}
@@ -35,7 +35,7 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 // CreateDataSet creates
 func createDataSet(DataSetKind string) interface{} {
 	var DataSet interface{}
-	
+
 	switch strings.ToLower(DataSetKind) {
 	case "company":
 		DataSet = newCompany()
@@ -49,9 +49,9 @@ func createDataSet(DataSetKind string) interface{} {
 // NewCompany company
 func newCompany() company.Company {
 	company := company.Company{
-		Version: 1,
+		Version:  1,
 		DateTime: 0,
-		SiteKey: 12345,
+		SiteKey:  12345,
 	}
 
 	return company
