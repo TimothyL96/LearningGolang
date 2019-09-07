@@ -7,7 +7,7 @@ import (
 
 const keyMaxLimit = 1000000
 
-// Key interface allows and forces other objects to use Key()
+// InterfaceKey allows and forces other objects to use Key()
 // before calling Key related methods such as get SiteKey() and String()
 type Key interface {
 	Key() *BaseKey
@@ -50,8 +50,10 @@ func (key *BaseKey) Key() *BaseKey {
 }
 
 // NewKey creates and then returns a new key of type BaseKey with it's key value incremented by 1 from the last created key.
+//
 // Minor key will be incremented first, but it will be reset to 0 if its value reached keyMaxLimit,
 // then major key will be incremented instead, or else site key will be incremented.
+//
 // The method panic if the key reaches its limit, which is site, major and minor key values all reached keyMaxLimit
 func NewKey() *BaseKey {
 	siteKey, majorKey, minorKey := lastKey.siteKey, lastKey.majorKey, lastKey.minorKey
