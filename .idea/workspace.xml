@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4397ed73-26b0-48a2-8951-bdbdc6246469" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/awesomeProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/awesomeProject.iml" afterDir="false" />
+    <list default="true" id="4397ed73-26b0-48a2-8951-bdbdc6246469" name="Default Changelist" comment="added Key package and separated it from Company">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Company/Company.go" beforeDir="false" afterPath="$PROJECT_DIR$/Company/Company.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Company/Machine.go" beforeDir="false" afterPath="$PROJECT_DIR$/Company/Machine.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Company/Task.go" beforeDir="false" afterPath="$PROJECT_DIR$/Company/Task.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataSetsStorage.go" beforeDir="false" afterPath="$PROJECT_DIR$/DataSetsStorage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/key/Key.go" beforeDir="false" afterPath="$PROJECT_DIR$/key/Key.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +76,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Go" />
+    <property name="settings.editor.selected.configurable" value="vcs.Mercurial" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -125,6 +127,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="push all IDE settings" />
+    <MESSAGE value="added Key package and separated it from Company" />
+    <option name="LAST_COMMIT_MESSAGE" value="added Key package and separated it from Company" />
   </component>
   <component name="masterDetails">
     <states>
