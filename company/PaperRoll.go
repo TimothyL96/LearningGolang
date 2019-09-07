@@ -1,10 +1,10 @@
 package company
 
-// PaperRoll xaxa
+// PaperRoll is the struct for paper roll
 type PaperRoll struct {
 	key
 	color  int
-	length int
+	length int // function
 
 	// Owner
 	knifeSetting *KnifeSetting

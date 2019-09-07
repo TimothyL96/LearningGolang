@@ -9,6 +9,7 @@ type KnifeSetting struct {
 	key
 	numberOfCut int
 	color       int
+	repetition  int // function
 
 	// Owner
 	company *Company
