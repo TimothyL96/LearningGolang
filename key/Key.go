@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-const keyMaxLimit = 1000000
+const keyMaxLimit = 1000000000
 
 // InterfaceKey allows and forces other objects to use Key()
 // before calling Key related methods such as get SiteKey() and String()
@@ -70,13 +70,11 @@ func NewKey() *BaseKey {
 		panic(errors.New("maxed out key").Error())
 	}
 
-	newKey := &BaseKey{
+	lastKey := &BaseKey{
 		siteKey:  siteKey,
 		majorKey: majorKey,
 		minorKey: minorKey,
 	}
 
-	lastKey = newKey
-
-	return newKey
+	return lastKey
 }

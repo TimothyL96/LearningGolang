@@ -23,30 +23,34 @@ type taskBase struct {
 	nextTask     Task
 }
 
+// TaskRolling is the struct for rolling task
 type TaskRolling struct {
 	*taskBase
 }
 
+// TaskCutting is the struct for cutting task
 type TaskCutting struct {
 	*taskBase
 }
 
+// TaskFolding is the struct for folding task
 type TaskFolding struct {
 	*taskBase
 }
 
+// TaskPacking is the struct for packing task
 type TaskPacking struct {
 	*taskBase
 }
 
-// SetDuration set the task duration from the parameter
+// SetDuration sets the task duration from the parameter
 func (task *taskBase) SetDuration(duration int) {
 	value := duration
 
 	CalcFunc(&(task.duration), &value, task.setEndDateTime)
 }
 
-// setEndDateTime a declarative function that gets called when any of its binding is changed.
+// setEndDateTime is a declarative function that gets called when any of its binding is changed.
 // Set the task end date time based on the summation of the task start date time and duration
 func (task *taskBase) setEndDateTime() {
 	if task == nil {
