@@ -2,11 +2,20 @@ package company
 
 // Task interface wraps all kinds of tasks for polymorphism
 type Task interface {
-	SetDuration(int)
+	key
+
+	StartDateTime() *int
 	EndDateTime() *int
-	setStartDateTime()
+	TaskType() *byte
+	Duration() *int
+	PreviousTask() Task
+	NextTask() Task
+
+	setEndDateTime()
+	SetDuration(int)
 	SetNextTask(newTask Task)
 	SetPreviousTask(newTask Task)
+	setStartDateTime()
 }
 
 // taskBase is the base struct for task
@@ -45,11 +54,58 @@ type TaskPacking struct {
 	*taskBase
 }
 
-// SetDuration sets the task duration from the parameter
-func (task *taskBase) SetDuration(duration int) {
-	value := duration
+// StartDateTime returns the start date time of the task
+func (task *taskBase) StartDateTime() *int {
+	if task == nil {
+		return nil
+	}
 
-	CalcFunc(&(task.duration), &value, task.setEndDateTime)
+	return &task.startDateTime
+}
+
+// EndDateTime returns the end date time of the task
+func (task *taskBase) EndDateTime() *int {
+	if task == nil {
+		return nil
+	}
+
+	return &task.endDateTime
+}
+
+// TaskType returns the task type of the task
+func (task *taskBase) TaskType() *byte {
+	if task == nil {
+		return nil
+	}
+
+	return &task.taskType
+}
+
+// Duration returns the duration of the task
+func (task *taskBase) Duration() *int {
+	if task == nil {
+		return nil
+	}
+
+	return &task.duration
+}
+
+// PreviousTask returns the previous task of the task
+func (task *taskBase) PreviousTask() Task {
+	if task == nil {
+		return nil
+	}
+
+	return task.previousTask
+}
+
+// NextTask returns the next task of the task
+func (task *taskBase) NextTask() Task {
+	if task == nil {
+		return nil
+	}
+
+	return task.nextTask
 }
 
 // setEndDateTime is a declarative function that gets called when any of its binding is changed.
@@ -64,13 +120,11 @@ func (task *taskBase) setEndDateTime() {
 	CalcFunc(&(task.endDateTime), &value, task.nextTask.setStartDateTime)
 }
 
-// EndDateTime returns the end date time of the task
-func (task *taskBase) EndDateTime() *int {
-	if task == nil {
-		return nil
-	}
+// SetDuration sets the task duration from the parameter
+func (task *taskBase) SetDuration(duration int) {
+	value := duration
 
-	return &task.endDateTime
+	CalcFunc(&(task.duration), &value, task.setEndDateTime)
 }
 
 // SetNextTask set the next task of the task to the parameter input of task

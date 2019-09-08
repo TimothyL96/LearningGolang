@@ -103,3 +103,39 @@ func (machine *Machine) Tasks() []Task {
 
 	return machine.tasks
 }
+
+// MachineName returns the name of the machine
+func (machine *Machine) MachineName() *string {
+	if machine == nil {
+		return nil
+	}
+
+	return &machine.name
+}
+
+// MachineType returns the type of the machine
+func (machine *Machine) MachineType() *byte {
+	if machine == nil {
+		return nil
+	}
+
+	return &machine.machineType
+}
+
+// FirstTask returns the first task of the machine
+func (machine *Machine) FirstTask() Task {
+	if machine == nil {
+		return nil
+	}
+
+	return machine.firstTask
+}
+
+// LastTask returns the last task of the machine
+func (machine *Machine) LastTask() Task {
+	if machine == nil {
+		return nil
+	}
+
+	return machine.lastTask
+}

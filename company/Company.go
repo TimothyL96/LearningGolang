@@ -29,6 +29,19 @@ const (
 	Packing = 'P'
 )
 
+// CreateCompany creates the root company instance and returns a pointer of it
+func CreateCompany(version float32, dateTime int) *Company {
+	company := &Company{
+		key:           keyConfiguration.NewKey(),
+		version:       version,
+		dateTime:      dateTime,
+		machines:      nil,
+		KnifeSettings: nil,
+	}
+
+	return company
+}
+
 // CreateMachine creates a single machine that is owned by the company
 func (company *Company) CreateMachine(name string, machineType byte) *Machine {
 	// Machine type can only be Rolling, Cutting, Folding, or Packing

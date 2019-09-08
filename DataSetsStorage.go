@@ -38,21 +38,10 @@ func createDataSet(DataSetKind string) interface{} {
 
 	switch strings.ToLower(DataSetKind) {
 	case "company":
-		DataSet = newCompany()
+		DataSet = company.CreateCompany(1.0, 123)
 	default:
 		log.Fatal("No such data set kind found!")
 	}
 
 	return DataSet
-}
-
-// NewCompany company
-func newCompany() company.Company {
-	company := company.Company{
-		Version:  1,
-		DateTime: 0,
-		SiteKey:  12345,
-	}
-
-	return company
 }
