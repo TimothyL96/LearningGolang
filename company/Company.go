@@ -140,7 +140,7 @@ func CalcFunc(currentValue interface{}, delta interface{}, funcToRuns ...func())
 	}
 }
 
-// GetAllMachines will return all machines owned by this company
-func (company *Company) GetAllMachines() []*Machine {
+// Machines will return all machines owned by this company
+func (company *Company) Machines() []*Machine {
 	return company.machines
 }

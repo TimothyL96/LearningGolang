@@ -3,9 +3,10 @@ package company
 // Task interface wraps all kinds of tasks for polymorphism
 type Task interface {
 	SetDuration(int)
-	GetEndDateTime() *int
+	EndDateTime() *int
 	setStartDateTime()
 	SetNextTask(newTask Task)
+	SetPreviousTask(newTask Task)
 }
 
 // taskBase is the base struct for task
@@ -19,6 +20,7 @@ type taskBase struct {
 	// Machine
 	machine *Machine
 
+	// Relation
 	previousTask Task
 	nextTask     Task
 }
@@ -62,8 +64,8 @@ func (task *taskBase) setEndDateTime() {
 	CalcFunc(&(task.endDateTime), &value, task.nextTask.setStartDateTime)
 }
 
-// GetEndDateTime returns the end date time of the task
-func (task *taskBase) GetEndDateTime() *int {
+// EndDateTime returns the end date time of the task
+func (task *taskBase) EndDateTime() *int {
 	if task == nil {
 		return nil
 	}
@@ -71,52 +73,56 @@ func (task *taskBase) GetEndDateTime() *int {
 	return &task.endDateTime
 }
 
-// GetNextTask
+// SetNextTask set the next task of the task to the parameter input of task
 func (task *taskBase) SetNextTask(newTask Task) {
 	task.nextTask = newTask
 }
 
-func (task *taskBase) setStartDateTime() {
-	// Do nothing
-	return
+// SetPreviousTask set the next task of the task to the parameter input of task
+func (task *taskBase) SetPreviousTask(newTask Task) {
+	task.previousTask = newTask
 }
 
+// setStartDateTime for rolling task
 func (task *TaskRolling) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := Guard(task.previousTask.GetEndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
 
 	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
 }
 
+// setStartDateTime for cutting task
 func (task *TaskCutting) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := Guard(task.previousTask.GetEndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
 
 	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
 }
 
+// setStartDateTime for folding task
 func (task *TaskFolding) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := Guard(task.previousTask.GetEndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
 
 	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
 }
 
+// setStartDateTime for packing task
 func (task *TaskPacking) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := Guard(task.previousTask.GetEndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
 
 	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
 }

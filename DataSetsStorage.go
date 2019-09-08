@@ -22,10 +22,10 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 	for _, ds := range DataSetsStorage.Companies {
 		fmt.Println("Data set (company) printing: ", ds)
 
-		for _, m := range ds.GetAllMachines() {
+		for _, m := range ds.Machines() {
 			fmt.Println("Machine printing: ", m)
 
-			for _, t := range m.GetAllTasks() {
+			for _, t := range m.Tasks() {
 				fmt.Println("Task printing: ", t)
 			}
 		}

@@ -16,7 +16,9 @@ type Machine struct {
 	company *Company
 
 	// Owning objects
-	tasks     []Task
+	tasks []Task
+
+	// Relation
 	firstTask Task
 	lastTask  Task
 }
@@ -33,31 +35,34 @@ func (machine *Machine) CreateTask(duration int) Task {
 		startDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 
+	// Create a specific task that wraps the created base task
+	specificTask := machine.newSpecificTask(taskBase)
+
 	// Set first task
 	if len(machine.tasks) == 0 {
-		machine.firstTask = taskBase
+		machine.firstTask = specificTask
 	}
 
 	if machine.lastTask != nil {
 		// Set previous task
-		taskBase.previousTask = machine.lastTask
+		specificTask.SetPreviousTask(machine.lastTask)
 
 		// Set previous next task
-		machine.lastTask.SetNextTask(taskBase)
+		machine.lastTask.SetNextTask(specificTask)
 	}
 
 	// Set last task
-	machine.lastTask = taskBase
+	machine.lastTask = specificTask
 
 	// Add task to this Machine list
-	machine.tasks = append(machine.tasks, taskBase)
+	machine.tasks = append(machine.tasks, specificTask)
 
 	// Run declarative functions here
 	// Remove the hack above, and call an init() method using Once.Do to initialize/calculate functions value, then remove this call
-	taskBase.setStartDateTime()
+	specificTask.setStartDateTime()
 
-	// Create and return the intended specific task
-	return machine.newSpecificTask(taskBase)
+	// Return the intended specific task
+	return specificTask
 }
 
 // newSpecificTask creates a new specific task and wrap the created base task in it
@@ -90,8 +95,8 @@ func (machine *Machine) newSpecificTask(base *taskBase) Task {
 	return specificTask
 }
 
-// GetAllTasks returns all tasks owned by this machine
-func (machine *Machine) GetAllTasks() []Task {
+// Tasks returns all tasks owned by this machine
+func (machine *Machine) Tasks() []Task {
 	if machine == nil {
 		return nil
 	}
