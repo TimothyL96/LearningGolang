@@ -25,10 +25,10 @@ type Machine struct {
 
 // Set machine type in constant
 const (
-	Rolling = 'R'
-	Cutting = 'C'
-	Folding = 'F'
-	Packing = 'P'
+	rolling = 'R'
+	cutting = 'C'
+	folding = 'F'
+	packing = 'P'
 )
 
 // CreateTask method
@@ -38,8 +38,8 @@ func (machine *Machine) CreateTask(duration int) Task {
 		taskType:      machine.machineType,
 		duration:      duration,
 		machine:       machine,
-		previousTask:  nil,
-		nextTask:      nil,
+		previousTask:  (*taskBase)(nil),
+		nextTask:      (*taskBase)(nil),
 		startDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 
@@ -75,24 +75,24 @@ func (machine *Machine) CreateTask(duration int) Task {
 
 // newSpecificTask creates a new specific task and wrap the created base task in it
 //
-// Specific tasks are: Rolling, Cutting, Folding, and Packing task
+// Specific tasks are: rolling, cutting, folding, and packing task
 func (machine *Machine) newSpecificTask(base *taskBase) Task {
 	var specificTask Task
 
 	switch machine.machineType {
-	case Rolling:
+	case rolling:
 		specificTask = &TaskRolling{
 			taskBase: base,
 		}
-	case Cutting:
+	case cutting:
 		specificTask = &TaskCutting{
 			taskBase: base,
 		}
-	case Folding:
+	case folding:
 		specificTask = &TaskFolding{
 			taskBase: base,
 		}
-	case Packing:
+	case packing:
 		specificTask = &TaskPacking{
 			taskBase: base,
 		}
@@ -113,21 +113,21 @@ func (machine *Machine) Tasks() []Task {
 }
 
 // MachineName returns the name of the machine
-func (machine *Machine) MachineName() *string {
+func (machine *Machine) MachineName() string {
 	if machine == nil {
-		return nil
+		panic(errors.New("machine is nil").Error())
 	}
 
-	return &machine.name
+	return machine.name
 }
 
 // MachineType returns the type of the machine
-func (machine *Machine) MachineType() *byte {
+func (machine *Machine) MachineType() byte {
 	if machine == nil {
-		return nil
+		panic(errors.New("machine is nil").Error())
 	}
 
-	return &machine.machineType
+	return machine.machineType
 }
 
 // FirstTask returns the first task of the machine

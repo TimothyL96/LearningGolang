@@ -34,11 +34,13 @@ func CreateCompany(version float32, dateTime int) *Company {
 	return company
 }
 
-// CreateMachine creates a single machine that is owned by the company
+// CreateMachine creates a single machine that is owned by the company.
+//
+// Machine type can only be 'R', 'C', 'F', or 'P'
 func (company *Company) CreateMachine(name string, machineType byte) *Machine {
-	// Machine type can only be Rolling, Cutting, Folding, or Packing
-	if isValid := company.IsValidMachineType(machineType); isValid {
-		panic(errors.New("machine is being created with invalid type" + string(machineType)).Error())
+	// Machine type can only be rolling, cutting, folding, or packing
+	if isValid := company.IsValidMachineType(machineType); !isValid {
+		panic(errors.New("machine is being created with invalid type " + string(machineType)).Error())
 	}
 
 	machine := &Machine{
@@ -86,9 +88,9 @@ func (company *Company) CreateOrder(ID, color, quantity, dueDate int) *Order {
 	return order
 }
 
-// IsValidMachineType checks if the input machine type is valid (Rolling, Cutting, Folding, or Packing) and returns a bool
+// IsValidMachineType checks if the input machine type is valid (rolling, cutting, folding, or packing) and returns a bool
 func (company *Company) IsValidMachineType(machineType byte) bool {
-	return machineType == Rolling || machineType == Cutting || machineType == Folding || machineType == Packing
+	return machineType == rolling || machineType == cutting || machineType == folding || machineType == packing
 }
 
 // SetDateTime sets the date time for the company
@@ -121,12 +123,12 @@ func Guard(currentValue interface{}, defaultValue interface{}) interface{} {
 	return defaultValue
 }
 
-// CalcFunc accepts 3 parameters where the first 2 are compared to see if their value are different.
+// CalcDeclarative accepts 3 parameters where the first 2 are compared to see if their value are different.
 //
 // If the value is different, the value of the 2nd parameter will be set to the first parameter, then the slice of functions in parameter 3 will be executed 1 by 1.
 //
 // The first and second parameter must always be a pointer
-func CalcFunc(currentValue interface{}, delta interface{}, funcToRuns ...func()) {
+func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...func()) {
 	if reflect.TypeOf(currentValue).Kind() != reflect.Ptr || reflect.TypeOf(delta).Kind() != reflect.Ptr {
 		panic(errors.New("non pointer value received when calculating function").Error())
 	}
@@ -142,6 +144,32 @@ func CalcFunc(currentValue interface{}, delta interface{}, funcToRuns ...func())
 		for _, funcToRun := range funcToRuns {
 			funcToRun()
 		}
+	}
+}
+
+// CalcFunction is generally used to calculate functions of variables (non pointer type)
+// due to Get method for normal fields returning non-pointer value compared to Get method of relation/pointer fields.
+//
+// This can be considered as a wrapper to CalcDeclarative for propagating variables' declarative functions
+//
+// Compared to CalcDeclarative, this method accepts non-pointer type in first parameter, and a third parameter that accepts the pointer of the field to be mutated
+// if the first parameter value and the value of the pointer in the second parameter is different.
+//
+// Panic if first parameter is a pointer or if third parameter is a non-pointer type
+func CalcFunction(currentValue interface{}, delta interface{}, addrCurrentValue interface{}, funcToRuns ...func()) {
+	if reflect.TypeOf(currentValue).Kind() == reflect.Ptr || reflect.TypeOf(addrCurrentValue).Kind() != reflect.Ptr {
+		panic(errors.New("use CalcDeclarative if calculating relation. This is for variables where first parameter is non pointer and third parameter is pointer of field to mutate").Error())
+	}
+
+	// Store the existing value of current value
+	existingValue := reflect.ValueOf(currentValue)
+
+	// Call the main declarative logic method with address of currentValue
+	CalcDeclarative(&currentValue, delta, funcToRuns...)
+
+	// If currentValue is mutated, mutate the value of pointer of the third parameter
+	if existingValue != currentValue {
+		reflect.ValueOf(addrCurrentValue).Elem().Set(existingValue)
 	}
 }
 

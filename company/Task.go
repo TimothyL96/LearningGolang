@@ -1,13 +1,17 @@
 package company
 
+import (
+	"errors"
+)
+
 // Task interface wraps all kinds of tasks for polymorphism
 type Task interface {
 	key
 
-	StartDateTime() *int
-	EndDateTime() *int
-	TaskType() *byte
-	Duration() *int
+	StartDateTime() int
+	EndDateTime() int
+	TaskType() byte
+	Duration() int
 	PreviousTask() Task
 	NextTask() Task
 
@@ -55,39 +59,39 @@ type TaskPacking struct {
 }
 
 // StartDateTime returns the start date time of the task
-func (task *taskBase) StartDateTime() *int {
+func (task *taskBase) StartDateTime() int {
 	if task == nil {
-		return nil
+		panic(errors.New("task is nil").Error())
 	}
 
-	return &task.startDateTime
+	return task.startDateTime
 }
 
 // EndDateTime returns the end date time of the task
-func (task *taskBase) EndDateTime() *int {
+func (task *taskBase) EndDateTime() int {
 	if task == nil {
-		return nil
+		panic(errors.New("task is nil").Error())
 	}
 
-	return &task.endDateTime
+	return task.endDateTime
 }
 
 // TaskType returns the task type of the task
-func (task *taskBase) TaskType() *byte {
+func (task *taskBase) TaskType() byte {
 	if task == nil {
-		return nil
+		panic(errors.New("task is nil").Error())
 	}
 
-	return &task.taskType
+	return task.taskType
 }
 
 // Duration returns the duration of the task
-func (task *taskBase) Duration() *int {
+func (task *taskBase) Duration() int {
 	if task == nil {
-		return nil
+		panic(errors.New("task is nil").Error())
 	}
 
-	return &task.duration
+	return task.duration
 }
 
 // PreviousTask returns the previous task of the task
@@ -115,16 +119,16 @@ func (task *taskBase) setEndDateTime() {
 		return
 	}
 
-	value := task.startDateTime + task.duration
+	value := task.StartDateTime() + task.Duration()
 
-	CalcFunc(&(task.endDateTime), &value, task.nextTask.setStartDateTime)
+	CalcDeclarative(&task.endDateTime, &value, task.NextTask().setStartDateTime)
 }
 
 // SetDuration sets the task duration from the parameter
 func (task *taskBase) SetDuration(duration int) {
 	value := duration
 
-	CalcFunc(&(task.duration), &value, task.setEndDateTime)
+	CalcDeclarative(&task.duration, &value, task.setEndDateTime)
 }
 
 // SetNextTask set the next task of the task to the parameter input of task
@@ -137,15 +141,20 @@ func (task *taskBase) SetPreviousTask(newTask Task) {
 	task.previousTask = newTask
 }
 
+// setStartDateTime for taskBase so that the struct implements Task interface
+func (task *taskBase) setStartDateTime() {
+	// Do nothing
+}
+
 // setStartDateTime for rolling task
 func (task *TaskRolling) setStartDateTime() {
 	if task == nil {
 		return
 	}
 
-	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
 
-	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
 // setStartDateTime for cutting task
@@ -154,9 +163,9 @@ func (task *TaskCutting) setStartDateTime() {
 		return
 	}
 
-	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
 
-	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
 // setStartDateTime for folding task
@@ -165,9 +174,9 @@ func (task *TaskFolding) setStartDateTime() {
 		return
 	}
 
-	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
 
-	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
 // setStartDateTime for packing task
@@ -176,7 +185,7 @@ func (task *TaskPacking) setStartDateTime() {
 		return
 	}
 
-	value := Guard(task.previousTask.EndDateTime(), task.machine.company.dateTime).(int)
+	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
 
-	CalcFunc(&(task.startDateTime), &value, task.setEndDateTime)
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
