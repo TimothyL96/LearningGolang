@@ -56,6 +56,6 @@ if the receiver is null.
 - Any method with receiver but not used in the body can skip the checking for valid receiver
 <br>
 
-##### **Making sure all get methods rule above enables the chaining of multiple pointers such as `A.B().C().D().E()` without having to check for nil**
+##### **Making sure all get methods follow the rules above will enable the chaining of multiple pointers such as `A.B().C().D().E()` without having to check for nil**
 
 ---
