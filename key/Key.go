@@ -56,21 +56,27 @@ func (key *BaseKey) Key() *BaseKey {
 //
 // The method panic if the key reaches its limit, which is site, major and minor key values all reached keyMaxLimit
 func NewKey() *BaseKey {
+	if lastKey == nil {
+		// Assign last key with a BaseKey and all the keys are auto initialized to zero
+		lastKey = &BaseKey{}
+
+		return lastKey
+	}
 	siteKey, majorKey, minorKey := lastKey.siteKey, lastKey.majorKey, lastKey.minorKey
 
-	if lastKey.minorKey != keyMaxLimit {
-		minorKey = lastKey.minorKey + 1
-	} else if lastKey.majorKey != keyMaxLimit {
+	if minorKey != keyMaxLimit {
+		minorKey++
+	} else if majorKey != keyMaxLimit {
 		minorKey = 0
-		majorKey = lastKey.majorKey + 1
-	} else if lastKey.siteKey != keyMaxLimit {
+		majorKey++
+	} else if siteKey != keyMaxLimit {
 		majorKey, minorKey = 0, 0
-		siteKey = lastKey.siteKey + 1
+		siteKey++
 	} else {
 		panic(errors.New("maxed out key").Error())
 	}
 
-	lastKey := &BaseKey{
+	lastKey = &BaseKey{
 		siteKey:  siteKey,
 		majorKey: majorKey,
 		minorKey: minorKey,
