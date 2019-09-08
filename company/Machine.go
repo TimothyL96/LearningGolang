@@ -23,6 +23,14 @@ type Machine struct {
 	lastTask  Task
 }
 
+// Set machine type in constant
+const (
+	Rolling = 'R'
+	Cutting = 'C'
+	Folding = 'F'
+	Packing = 'P'
+)
+
 // CreateTask method
 func (machine *Machine) CreateTask(duration int) Task {
 	taskBase := &taskBase{

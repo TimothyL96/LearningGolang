@@ -21,14 +21,6 @@ type Company struct {
 	KnifeSettings []*KnifeSetting
 }
 
-// Set machine type in constant
-const (
-	Rolling = 'R'
-	Cutting = 'C'
-	Folding = 'F'
-	Packing = 'P'
-)
-
 // CreateCompany creates the root company instance and returns a pointer of it
 func CreateCompany(version float32, dateTime int) *Company {
 	company := &Company{
