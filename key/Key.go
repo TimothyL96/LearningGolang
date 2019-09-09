@@ -13,7 +13,8 @@ type InterfaceKey interface {
 	Key() *BaseKey
 }
 
-// Key is the struct wrapper for InterfaceKey
+// Key is the wrapper struct for InterfaceKey.
+// Key contains the real key struct BaseKey which can be retrieved with Key()
 type Key struct {
 	baseKey *BaseKey
 }
@@ -58,20 +59,24 @@ func (key *BaseKey) MinorKey() *int {
 	return &key.minorKey
 }
 
-// NewKey creates and then returns a new key of type BaseKey with it's key value incremented by 1 from the last created key.
+// NewKey creates and then returns a new key of type Key with it's key value incremented by 1 from the last created key.
 //
-// Minor key will be incremented first, but it will be reset to 0 if its value reached keyMaxLimit,
-// then major key will be incremented instead, or else site key will be incremented.
+// Minor key will be incremented first, but if its value reached keyMaxLimit,
+// it will be reset to 0 and then major key will be incremented instead,
+// or else site key will be incremented and both minor and major key will be reset to 0.
 //
-// The method panic if the key reaches its limit, which is site, major and minor key values all reached keyMaxLimit
+// The method panics if the key reaches its limit, which is site, major and minor key values all reached keyMaxLimit
 func NewKey() *Key {
 	if lastKey == nil {
-		// Assign last key with a BaseKey and all the keys are auto initialized to zero
+		// If this is the first key to be generated,
+		// assign last key with a BaseKey and all the keys are auto initialized to zero
 		lastKey = &BaseKey{}
 
+		// Return the base key wrapped in Key struct
 		return &Key{lastKey}
 	}
 
+	// Determine the increment for the new key
 	siteKey, majorKey, minorKey := lastKey.siteKey, lastKey.majorKey, lastKey.minorKey
 
 	if minorKey != keyMaxLimit {
@@ -86,11 +91,13 @@ func NewKey() *Key {
 		panic(errors.New("maxed out key").Error())
 	}
 
+	// Create and assign new key to last key
 	lastKey = &BaseKey{
 		siteKey:  siteKey,
 		majorKey: majorKey,
 		minorKey: minorKey,
 	}
 
+	// Return the base key wrapped in Key struct
 	return &Key{lastKey}
 }

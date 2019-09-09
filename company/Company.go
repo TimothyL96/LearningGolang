@@ -7,7 +7,8 @@ import (
 	keyConfiguration "github.com/ttimt/GolangWebSocket/key"
 )
 
-// Map the interface Key from key package to the type key so it will be unexported (instead of using interface Key)
+// Map the Key struct from key package to the type key so it will be unexported
+// (instead of using keyword interface 'Key' where it will become exported if used)
 type key = *keyConfiguration.Key
 
 // Company struct represents the root instance of the dataset
@@ -101,9 +102,14 @@ func (company *Company) SetDateTime(dateTime int) {
 	}
 }
 
+// Machines will return all machines owned by this company
+func (company *Company) Machines() []*Machine {
+	return company.machines
+}
+
 // CalcDeclarative accepts 3 parameters where the first 2 are compared to see if their value are different.
 //
-// If the value is different, the value of the 2nd parameter will be set to the first parameter, then the slice of functions in parameter 3 will be executed 1 by 1.
+// If the value is different, the value of the 2nd parameter will be set to the first parameter, then the slice of functions in parameter 3 will all be executed.
 //
 // The first and second parameter must always be a pointer
 func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...func()) {
@@ -123,9 +129,4 @@ func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...
 			funcToRun()
 		}
 	}
-}
-
-// Machines will return all machines owned by this company
-func (company *Company) Machines() []*Machine {
-	return company.machines
 }

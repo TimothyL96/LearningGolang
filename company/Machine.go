@@ -43,7 +43,7 @@ func (machine *Machine) CreateTask(duration int) *Task {
 		startDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 
-	// Create a specific task that wraps the created base task
+	// Create a specific task and add it to the new task instance
 	machine.newSpecificTask(task)
 
 	// Set first task
@@ -73,36 +73,30 @@ func (machine *Machine) CreateTask(duration int) *Task {
 	return task
 }
 
-// newSpecificTask creates a new specific task and wrap the created base task in it
+// newSpecificTask creates a new specific task and assign it to the specific task field of the input *Task
 //
 // Specific tasks are: rolling, cutting, folding, and packing task
-//
-// If the parameter input is nil, Create a nil Task by setting nil struct to the interface
 func (machine *Machine) newSpecificTask(task *Task) {
 	switch machine.machineType {
 	case rolling:
-		task.setSpecificTask(
-			&taskRolling{
-				Task: task,
-			})
+		task.specificTask = &taskRolling{
+			Task: task,
+		}
 
 	case cutting:
-		task.setSpecificTask(
-			&taskCutting{
-				Task: task,
-			})
+		task.specificTask = &taskCutting{
+			Task: task,
+		}
 
 	case folding:
-		task.setSpecificTask(
-			&taskFolding{
-				Task: task,
-			})
+		task.specificTask = &taskFolding{
+			Task: task,
+		}
 
 	case packing:
-		task.setSpecificTask(
-			&taskPacking{
-				Task: task,
-			})
+		task.specificTask = &taskPacking{
+			Task: task,
+		}
 
 	default:
 		panic(errors.New("machine has invalid type:" + string(machine.machineType)).Error())
