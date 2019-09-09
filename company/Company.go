@@ -8,7 +8,7 @@ import (
 )
 
 // Map the interface Key from key package to the type key so it will be unexported (instead of using interface Key)
-type key = keyConfiguration.Key
+type key = *keyConfiguration.Key
 
 // Company struct represents the root instance of the dataset
 type Company struct {
@@ -38,7 +38,6 @@ func CreateCompany(version float32, dateTime int) *Company {
 //
 // Machine type can only be 'R', 'C', 'F', or 'P'
 func (company *Company) CreateMachine(name string, machineType byte) *Machine {
-	// Machine type can only be rolling, cutting, folding, or packing
 	if isValid := company.IsValidMachineType(machineType); !isValid {
 		panic(errors.New("machine is being created with invalid type " + string(machineType)).Error())
 	}
@@ -102,27 +101,6 @@ func (company *Company) SetDateTime(dateTime int) {
 	}
 }
 
-// Guard will return value of the 2nd parameter if first is invalid.
-//
-// Simplify the checking especially for a chain of pointer fields such as A.B.C.D
-//
-// First parameter must be a pointer
-func Guard(currentValue interface{}, defaultValue interface{}) interface{} {
-	if reflect.TypeOf(currentValue).Kind() != reflect.Ptr {
-		panic(errors.New("non pointer passed to Guard function").Error())
-	}
-
-	// Get pointer of current value
-	currentValuePtr := reflect.ValueOf(currentValue)
-
-	// Return currentValue if it's not nil
-	if !currentValuePtr.IsNil() {
-		return currentValuePtr.Elem().Interface()
-	}
-
-	return defaultValue
-}
-
 // CalcDeclarative accepts 3 parameters where the first 2 are compared to see if their value are different.
 //
 // If the value is different, the value of the 2nd parameter will be set to the first parameter, then the slice of functions in parameter 3 will be executed 1 by 1.
@@ -144,32 +122,6 @@ func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...
 		for _, funcToRun := range funcToRuns {
 			funcToRun()
 		}
-	}
-}
-
-// CalcFunction is generally used to calculate functions of variables (non pointer type)
-// due to Get method for normal fields returning non-pointer value compared to Get method of relation/pointer fields.
-//
-// This can be considered as a wrapper to CalcDeclarative for propagating variables' declarative functions
-//
-// Compared to CalcDeclarative, this method accepts non-pointer type in first parameter, and a third parameter that accepts the pointer of the field to be mutated
-// if the first parameter value and the value of the pointer in the second parameter is different.
-//
-// Panic if first parameter is a pointer or if third parameter is a non-pointer type
-func CalcFunction(currentValue interface{}, delta interface{}, addrCurrentValue interface{}, funcToRuns ...func()) {
-	if reflect.TypeOf(currentValue).Kind() == reflect.Ptr || reflect.TypeOf(addrCurrentValue).Kind() != reflect.Ptr {
-		panic(errors.New("use CalcDeclarative if calculating relation. This is for variables where first parameter is non pointer and third parameter is pointer of field to mutate").Error())
-	}
-
-	// Store the existing value of current value
-	existingValue := reflect.ValueOf(currentValue)
-
-	// Call the main declarative logic method with address of currentValue
-	CalcDeclarative(&currentValue, delta, funcToRuns...)
-
-	// If currentValue is mutated, mutate the value of pointer of the third parameter
-	if existingValue != currentValue {
-		reflect.ValueOf(addrCurrentValue).Elem().Set(existingValue)
 	}
 }
 

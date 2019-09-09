@@ -16,11 +16,11 @@ type Machine struct {
 	company *Company
 
 	// Owning objects
-	tasks []Task
+	tasks []*Task
 
 	// Relation
-	firstTask Task
-	lastTask  Task
+	firstTask *Task
+	lastTask  *Task
 }
 
 // Set machine type in constant
@@ -32,79 +32,85 @@ const (
 )
 
 // CreateTask method
-func (machine *Machine) CreateTask(duration int) Task {
-	taskBase := &taskBase{
+func (machine *Machine) CreateTask(duration int) *Task {
+	task := &Task{
 		key:           keyConfiguration.NewKey(),
 		taskType:      machine.machineType,
 		duration:      duration,
 		machine:       machine,
-		previousTask:  (*taskBase)(nil),
-		nextTask:      (*taskBase)(nil),
+		previousTask:  nil,
+		nextTask:      nil,
 		startDateTime: -1, // Hack, need a method to initialize all functions after instance created
 	}
 
 	// Create a specific task that wraps the created base task
-	specificTask := machine.newSpecificTask(taskBase)
+	machine.newSpecificTask(task)
 
 	// Set first task
 	if len(machine.tasks) == 0 {
-		machine.firstTask = specificTask
+		machine.firstTask = task
 	}
 
 	if machine.lastTask != nil {
 		// Set previous task
-		specificTask.SetPreviousTask(machine.lastTask)
+		task.SetPreviousTask(machine.lastTask)
 
 		// Set previous next task
-		machine.lastTask.SetNextTask(specificTask)
+		machine.lastTask.SetNextTask(task)
 	}
 
 	// Set last task
-	machine.lastTask = specificTask
+	machine.lastTask = task
 
 	// Add task to this Machine list
-	machine.tasks = append(machine.tasks, specificTask)
+	machine.tasks = append(machine.tasks, task)
 
 	// Run declarative functions here
 	// Remove the hack above, and call an init() method using Once.Do to initialize/calculate functions value, then remove this call
-	specificTask.setStartDateTime()
+	task.setStartDateTime()
 
 	// Return the intended specific task
-	return specificTask
+	return task
 }
 
 // newSpecificTask creates a new specific task and wrap the created base task in it
 //
 // Specific tasks are: rolling, cutting, folding, and packing task
-func (machine *Machine) newSpecificTask(base *taskBase) Task {
-	var specificTask Task
-
+//
+// If the parameter input is nil, Create a nil Task by setting nil struct to the interface
+func (machine *Machine) newSpecificTask(task *Task) {
 	switch machine.machineType {
 	case rolling:
-		specificTask = &TaskRolling{
-			taskBase: base,
-		}
+		task.setSpecificTask(
+			&taskRolling{
+				Task: task,
+			})
+
 	case cutting:
-		specificTask = &TaskCutting{
-			taskBase: base,
-		}
+		task.setSpecificTask(
+			&taskCutting{
+				Task: task,
+			})
+
 	case folding:
-		specificTask = &TaskFolding{
-			taskBase: base,
-		}
+		task.setSpecificTask(
+			&taskFolding{
+				Task: task,
+			})
+
 	case packing:
-		specificTask = &TaskPacking{
-			taskBase: base,
-		}
+		task.setSpecificTask(
+			&taskPacking{
+				Task: task,
+			})
+
 	default:
 		panic(errors.New("machine has invalid type:" + string(machine.machineType)).Error())
 	}
-
-	return specificTask
 }
 
 // Tasks returns all tasks owned by this machine
-func (machine *Machine) Tasks() []Task {
+func (machine *Machine) Tasks() []*Task {
 	if machine == nil {
 		return nil
 	}
@@ -131,7 +137,7 @@ func (machine *Machine) MachineType() byte {
 }
 
 // FirstTask returns the first task of the machine
-func (machine *Machine) FirstTask() Task {
+func (machine *Machine) FirstTask() *Task {
 	if machine == nil {
 		return nil
 	}
@@ -140,7 +146,7 @@ func (machine *Machine) FirstTask() Task {
 }
 
 // LastTask returns the last task of the machine
-func (machine *Machine) LastTask() Task {
+func (machine *Machine) LastTask() *Task {
 	if machine == nil {
 		return nil
 	}

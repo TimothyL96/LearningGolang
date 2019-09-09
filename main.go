@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"runtime/debug"
 
-	"github.com/ttimt/GolangWebSocket/company"
+	companyDataset "github.com/ttimt/GolangWebSocket/company"
 )
 
 // var counter int
@@ -92,7 +92,7 @@ func main() {
 	// Get input to create new data set
 	var DataSetKind string
 	fmt.Println("Enter a data set kind to be created (company):")
-	fmt.Scanln(&DataSetKind)
+	_, _ = fmt.Scanln(&DataSetKind)
 
 	convertDataSet(DataSetKind)
 
@@ -105,13 +105,13 @@ func convertDataSet(DataSetKind string) {
 
 	// Server startup - Create the data set from the input using type assertion
 	// From here, we are assuming the dataset or string entered is "company"
-	DataSetInstance, succeed := (createDataSet(DataSetKind)).(company.Company)
+	DataSetInstance, succeed := (createDataSet(DataSetKind)).(*companyDataset.Company)
 
 	if !succeed {
 		panic(errors.New("type assertion failed").Error())
 	} else {
-		DataSets.Companies = append(DataSets.Companies, &DataSetInstance)
-		testCompany(&DataSetInstance)
+		DataSets.Companies = append(DataSets.Companies, DataSetInstance)
+		testCompany(DataSetInstance)
 	}
 }
 
@@ -123,13 +123,12 @@ func recoverPanic() {
 	}
 }
 
-func testCompany(company *company.Company) {
+func testCompany(company *companyDataset.Company) {
 	// Create a machine
-	m1 := company.CreateMachine("Golang first machine", 'T')
+	m1 := company.CreateMachine("Golang first machine", 'R')
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
-	firsttask := m1.CreateTask(2)
-	t := firsttask
+	t := m1.CreateTask(2)
 	for i := 1; i < 10; i++ {
 		t = m1.CreateTask(rand.Int() % 10000)
 	}
@@ -140,45 +139,52 @@ func testCompany(company *company.Company) {
 	// Print out last task of machine1
 	// Change the duration
 	// Then print out the task again
-	fmt.Println("FIRST ###########")
-	fmt.Println("Task key: ", t.Key().String())
-	fmt.Println("Task type: ", string(*t.TaskType()))
+	fmt.Println("FIRST print ###########")
+	fmt.Println("specificTask key: ", t.Key().String())
+	fmt.Println("specificTask type: ", string(t.TaskType()))
 	fmt.Println("Duration: ", t.Duration())
 	fmt.Println("Start date time: ", t.StartDateTime())
 	fmt.Println("End date time: ", t.EndDateTime())
 	fmt.Println("Previous task: ", t.PreviousTask().Key())
-	fmt.Println("Next task: ", t.NextTask().Key())
-	t.SetDuration(10)
-	fmt.Println("SECOND ############")
-	fmt.Println("Task key: ", t.Key().String())
-	fmt.Println("Task type: ", string(*t.TaskType()))
-	fmt.Println("Duration: ", t.Duration())
-	fmt.Println("Start date time: ", t.StartDateTime())
-	fmt.Println("End date time: ", t.EndDateTime())
-	fmt.Println("Previous task: ", t.PreviousTask().Key())
-	fmt.Println("Next task: ", t.NextTask().Key())
+	if t.NextTask() != nil {
+		fmt.Println("Next task: ", t.NextTask().Key())
+	}
 
-	// fmt.Printf("First: \n%p\n\n", company)
-	// fmt.Printf("Second: (TaskType) \n%+v\n\n", string(company.Machines[0].Tasks[0].TaskType))
+	t.SetDuration(10)
+	fmt.Println("SECOND print ############")
+	fmt.Println("specificTask key: ", t.Key().String())
+	fmt.Println("specificTask type: ", string(t.TaskType()))
+	fmt.Println("Duration: ", t.Duration())
+	fmt.Println("Start date time: ", t.StartDateTime())
+	fmt.Println("End date time: ", t.EndDateTime())
+	fmt.Println("Previous task: ", t.PreviousTask().Key())
+	if t.NextTask() != nil {
+		fmt.Println("Next task: ", t.NextTask().Key())
+	}
+
 	// fmt.Println("Print all dataset:")
 	// DataSets.printAllDataSets()
 	for _, m := range company.Machines() {
 		fmt.Println("***************************************")
 		fmt.Println("Machine key: ", m.Key().String())
 		fmt.Println("Machine Name: ", m.MachineName())
-		fmt.Println("Machine Type: ", string(*m.MachineType()))
-		fmt.Println("Machine First Task: ", m.FirstTask().Key())
-		fmt.Println("Machine Last Task: ", m.LastTask().Key())
+		fmt.Println("Machine Type: ", string(m.MachineType()))
+		fmt.Println("Machine First specificTask: ", m.FirstTask().Key())
+		fmt.Println("Machine Last specificTask: ", m.LastTask().Key())
 
 		for _, t := range m.Tasks() {
 			fmt.Println("******")
 			fmt.Println("Task key: ", t.Key().String())
-			fmt.Println("Task type: ", string(*t.TaskType()))
+			fmt.Println("Task type: ", string(t.TaskType()))
 			fmt.Println("Duration: ", t.Duration())
 			fmt.Println("Start date time: ", t.StartDateTime())
 			fmt.Println("End date time: ", t.EndDateTime())
-			fmt.Println("Previous task: ", t.PreviousTask().Key())
-			fmt.Println("Next task: ", t.NextTask().Key())
+			if t.PreviousTask() != nil {
+				fmt.Println("Previous task: ", t.PreviousTask().Key())
+			}
+			if t.NextTask() != nil {
+				fmt.Println("Next task: ", t.NextTask().Key())
+			}
 		}
 	}
 }

@@ -4,62 +4,70 @@ import (
 	"errors"
 )
 
-// Task interface wraps all kinds of tasks for polymorphism
-type Task interface {
-	key
-
+// specificTask interface wraps all kinds of tasks for polymorphism
+type specificTask interface {
 	StartDateTime() int
+	startDateTimePtr() *int
 	EndDateTime() int
+	endDateTimePtr() *int
 	TaskType() byte
 	Duration() int
-	PreviousTask() Task
-	NextTask() Task
+	durationPtr() *int
+	PreviousTask() *Task
+	NextTask() *Task
 
 	setEndDateTime()
 	SetDuration(int)
-	SetNextTask(newTask Task)
-	SetPreviousTask(newTask Task)
+	SetNextTask(*Task)
+	SetPreviousTask(*Task)
 	setStartDateTime()
 }
 
-// taskBase is the base struct for task
-type taskBase struct {
+// Task is the base struct for task
+type Task struct {
 	key
 	taskType      byte
 	duration      int
 	startDateTime int // function
 	endDateTime   int // function
 
+	// Subclass: Rolling, Cutting, Folding or Packing
+	specificTask
+
 	// Machine
 	machine *Machine
 
 	// Relation
-	previousTask Task
-	nextTask     Task
+	previousTask *Task
+	nextTask     *Task
 }
 
-// TaskRolling is the struct for rolling task
-type TaskRolling struct {
-	*taskBase
+// taskRolling is the struct for rolling task
+type taskRolling struct {
+	*Task
 }
 
-// TaskCutting is the struct for cutting task
-type TaskCutting struct {
-	*taskBase
+// taskCutting is the struct for cutting task
+type taskCutting struct {
+	*Task
 }
 
-// TaskFolding is the struct for folding task
-type TaskFolding struct {
-	*taskBase
+// taskFolding is the struct for folding task
+type taskFolding struct {
+	*Task
 }
 
-// TaskPacking is the struct for packing task
-type TaskPacking struct {
-	*taskBase
+// taskPacking is the struct for packing task
+type taskPacking struct {
+	*Task
+}
+
+func (task *Task) setSpecificTask(specificTask specificTask) {
+	task.specificTask = specificTask
 }
 
 // StartDateTime returns the start date time of the task
-func (task *taskBase) StartDateTime() int {
+func (task *Task) StartDateTime() int {
 	if task == nil {
 		panic(errors.New("task is nil").Error())
 	}
@@ -67,8 +75,17 @@ func (task *taskBase) StartDateTime() int {
 	return task.startDateTime
 }
 
+// startDateTimePtr returns the pointer of start date time of the task
+func (task *Task) startDateTimePtr() *int {
+	if task == nil {
+		return nil
+	}
+
+	return &task.startDateTime
+}
+
 // EndDateTime returns the end date time of the task
-func (task *taskBase) EndDateTime() int {
+func (task *Task) EndDateTime() int {
 	if task == nil {
 		panic(errors.New("task is nil").Error())
 	}
@@ -76,8 +93,17 @@ func (task *taskBase) EndDateTime() int {
 	return task.endDateTime
 }
 
+// endDateTimePtr returns the pointer of end date time of the task
+func (task *Task) endDateTimePtr() *int {
+	if task == nil {
+		return nil
+	}
+
+	return &task.endDateTime
+}
+
 // TaskType returns the task type of the task
-func (task *taskBase) TaskType() byte {
+func (task *Task) TaskType() byte {
 	if task == nil {
 		panic(errors.New("task is nil").Error())
 	}
@@ -86,7 +112,7 @@ func (task *taskBase) TaskType() byte {
 }
 
 // Duration returns the duration of the task
-func (task *taskBase) Duration() int {
+func (task *Task) Duration() int {
 	if task == nil {
 		panic(errors.New("task is nil").Error())
 	}
@@ -94,8 +120,17 @@ func (task *taskBase) Duration() int {
 	return task.duration
 }
 
+// durationPtr returns the pointer of duration of the task
+func (task *Task) durationPtr() *int {
+	if task == nil {
+		return nil
+	}
+
+	return &task.duration
+}
+
 // PreviousTask returns the previous task of the task
-func (task *taskBase) PreviousTask() Task {
+func (task *Task) PreviousTask() *Task {
 	if task == nil {
 		return nil
 	}
@@ -104,7 +139,7 @@ func (task *taskBase) PreviousTask() Task {
 }
 
 // NextTask returns the next task of the task
-func (task *taskBase) NextTask() Task {
+func (task *Task) NextTask() *Task {
 	if task == nil {
 		return nil
 	}
@@ -114,78 +149,92 @@ func (task *taskBase) NextTask() Task {
 
 // setEndDateTime is a declarative function that gets called when any of its binding is changed.
 // Set the task end date time based on the summation of the task start date time and duration
-func (task *taskBase) setEndDateTime() {
+func (task *Task) setEndDateTime() {
 	if task == nil {
 		return
 	}
 
 	value := task.StartDateTime() + task.Duration()
 
-	CalcDeclarative(&task.endDateTime, &value, task.NextTask().setStartDateTime)
+	var funcToPass []func()
+	if task.NextTask() != nil {
+		funcToPass = append(funcToPass, task.NextTask().setStartDateTime)
+	}
+	CalcDeclarative(task.endDateTimePtr(), &value, funcToPass...)
 }
 
 // SetDuration sets the task duration from the parameter
-func (task *taskBase) SetDuration(duration int) {
+func (task *Task) SetDuration(duration int) {
+	if task == nil {
+		panic(errors.New("task is nil").Error())
+	}
+
 	value := duration
 
-	CalcDeclarative(&task.duration, &value, task.setEndDateTime)
+	CalcDeclarative(task.durationPtr(), &value, task.setEndDateTime)
 }
 
 // SetNextTask set the next task of the task to the parameter input of task
-func (task *taskBase) SetNextTask(newTask Task) {
+func (task *Task) SetNextTask(newTask *Task) {
 	task.nextTask = newTask
 }
 
 // SetPreviousTask set the next task of the task to the parameter input of task
-func (task *taskBase) SetPreviousTask(newTask Task) {
+func (task *Task) SetPreviousTask(newTask *Task) {
 	task.previousTask = newTask
 }
 
-// setStartDateTime for taskBase so that the struct implements Task interface
-func (task *taskBase) setStartDateTime() {
-	// Do nothing
+// setStartDateTime for taskBase so that the struct implements specificTask interface
+func (task *Task) setStartDateTime() {
+	if task == nil || task.specificTask == nil {
+		return
+	}
+
+	// Call the overridden method
+	task.specificTask.setStartDateTime()
 }
 
 // setStartDateTime for rolling task
-func (task *TaskRolling) setStartDateTime() {
-	if task == nil {
-		return
+func (task *taskRolling) setStartDateTime() {
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
 	}
 
-	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	CalcDeclarative(task.startDateTimePtr(), &value, task.setEndDateTime)
 }
 
 // setStartDateTime for cutting task
-func (task *TaskCutting) setStartDateTime() {
-	if task == nil {
-		return
+func (task *taskCutting) setStartDateTime() {
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
 	}
 
-	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	CalcDeclarative(task.startDateTimePtr(), &value, task.setEndDateTime)
 }
 
 // setStartDateTime for folding task
-func (task *TaskFolding) setStartDateTime() {
-	if task == nil {
-		return
+func (task *taskFolding) setStartDateTime() {
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
 	}
 
-	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	CalcDeclarative(task.startDateTimePtr(), &value, task.setEndDateTime)
 }
 
 // setStartDateTime for packing task
-func (task *TaskPacking) setStartDateTime() {
-	if task == nil {
-		return
+func (task *taskPacking) setStartDateTime() {
+
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
 	}
 
-	value := Guard(task.PreviousTask().EndDateTime(), task.machine.company.dateTime).(int)
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	CalcDeclarative(task.startDateTimePtr(), &value, task.setEndDateTime)
 }

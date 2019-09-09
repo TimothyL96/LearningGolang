@@ -5,12 +5,12 @@ import (
 	"log"
 	"strings"
 
-	"github.com/ttimt/GolangWebSocket/company"
+	companyDataset "github.com/ttimt/GolangWebSocket/company"
 )
 
 // DataSetsStorage struct
 type DataSetsStorage struct {
-	Companies []*company.Company
+	Companies []*companyDataset.Company
 }
 
 // DataSets abc
@@ -26,7 +26,7 @@ func (DataSetsStorage DataSetsStorage) printAllDataSets() {
 			fmt.Println("Machine printing: ", m)
 
 			for _, t := range m.Tasks() {
-				fmt.Println("Task printing: ", t)
+				fmt.Println("specificTask printing: ", t)
 			}
 		}
 	}
@@ -38,7 +38,7 @@ func createDataSet(DataSetKind string) interface{} {
 
 	switch strings.ToLower(DataSetKind) {
 	case "company":
-		DataSet = company.CreateCompany(1.0, 123)
+		DataSet = companyDataset.CreateCompany(1.0, 123)
 	default:
 		log.Fatal("No such data set kind found!")
 	}
