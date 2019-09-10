@@ -24,7 +24,7 @@ type Task struct {
 	// Subclass: Rolling, Cutting, Folding or Packing
 	specificTask
 
-	// Machine
+	// Owner
 	machine *Machine
 
 	// Relation
@@ -148,8 +148,10 @@ func (task *Task) SetPreviousTask(newTask *Task) {
 // Check interface for nil before getting the derived method.
 // Also check for recursive call and panic in case derived struct does not implement the method
 func (task *Task) setStartDateTime() {
-	if task == nil || task.specificTask == nil {
+	if task == nil {
 		return
+	} else if task.specificTask == nil {
+		panic(errors.New("fatal error: task does not have specific task").Error())
 	}
 
 	// Check for recursive call and panic.
