@@ -2,16 +2,11 @@ package key
 
 import (
 	"errors"
+	"math"
 	"strconv"
 )
 
-const keyMaxLimit = 1000000000
-
-// InterfaceKey allows and forces other objects to use Key()
-// before calling Key related methods such as get SiteKey() and String()
-type InterfaceKey interface {
-	Key() *BaseKey
-}
+const keyMaxLimit = math.MaxInt32
 
 // Key is the wrapper struct for InterfaceKey.
 // Key contains the real key struct BaseKey which can be retrieved with Key()

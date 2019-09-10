@@ -139,9 +139,9 @@ func testCompany(company *companyDataset.Company) {
 	// Print out last task of machine1
 	// Change the duration
 	// Then print out the task again
-	fmt.Println("FIRST print ###########")
-	fmt.Println("specificTask key: ", t.Key().String())
-	fmt.Println("specificTask type: ", string(t.TaskType()))
+	fmt.Println("FIRST print ######################")
+	fmt.Println("Task key: ", t.Key().String())
+	fmt.Println("Task type: ", string(t.TaskType()))
 	fmt.Println("Duration: ", t.Duration())
 	fmt.Println("Start date time: ", t.StartDateTime())
 	fmt.Println("End date time: ", t.EndDateTime())
@@ -151,9 +151,9 @@ func testCompany(company *companyDataset.Company) {
 	}
 
 	t.SetDuration(10)
-	fmt.Println("SECOND print ############")
-	fmt.Println("specificTask key: ", t.Key().String())
-	fmt.Println("specificTask type: ", string(t.TaskType()))
+	fmt.Println("SECOND print #######################")
+	fmt.Println("Task key: ", t.Key().String())
+	fmt.Println("Task type: ", string(t.TaskType()))
 	fmt.Println("Duration: ", t.Duration())
 	fmt.Println("Start date time: ", t.StartDateTime())
 	fmt.Println("End date time: ", t.EndDateTime())
@@ -169,8 +169,8 @@ func testCompany(company *companyDataset.Company) {
 		fmt.Println("Machine key: ", m.Key().String())
 		fmt.Println("Machine Name: ", m.MachineName())
 		fmt.Println("Machine Type: ", string(m.MachineType()))
-		fmt.Println("Machine First specificTask: ", m.FirstTask().Key())
-		fmt.Println("Machine Last specificTask: ", m.LastTask().Key())
+		fmt.Println("Machine First Task: ", m.FirstTask().Key())
+		fmt.Println("Machine Last Task: ", m.LastTask().Key())
 
 		for _, t := range m.Tasks() {
 			fmt.Println("******")
