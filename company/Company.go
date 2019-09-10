@@ -3,6 +3,8 @@ package company
 import (
 	"errors"
 	"reflect"
+	"runtime"
+	"strings"
 
 	keyConfiguration "github.com/ttimt/GolangWebSocket/key"
 )
@@ -129,4 +131,40 @@ func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...
 			funcToRun()
 		}
 	}
+}
+
+// IsInfiniteRecursiveCall method will check for recursive call and panic
+func IsInfiniteRecursiveCall() (isInfinite bool, err string) {
+	// "Current method" has the ID excluding current method which is 0
+	const currentMethodID, callerMethodID = 1, 2
+
+	// Get the program counter of current and previous method
+	// pc = Program counter
+	currentPC, _, _, currentIsValid := runtime.Caller(currentMethodID)
+	callerPC, _, _, callerIsValid := runtime.Caller(callerMethodID)
+
+	if !currentIsValid || !callerIsValid {
+		err = "can't retrieve program counter of caller or current method"
+	}
+
+	// Get the details of current and previous method from the program counter
+	currentDetail := runtime.FuncForPC(currentPC)
+	previousDetail := runtime.FuncForPC(callerPC)
+
+	// Split the details separated by dot
+	currentNameType := strings.Split(currentDetail.Name(), ".")
+	previousNameType := strings.Split(previousDetail.Name(), ".")
+
+	// Get the last 2 elements which contain the current type and method
+	currentNameType = currentNameType[len(currentNameType)-2:]
+	previousNameType = previousNameType[len(previousNameType)-2:]
+
+	// Compare the previous and current's name and type
+	// Panic if they are the same (infinite recursive call)
+	if reflect.DeepEqual(currentNameType, previousNameType) {
+		isInfinite = true
+		err = "fatal error: infinite recursive call on " + strings.Join(currentNameType, ", ")
+	}
+
+	return
 }

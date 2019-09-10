@@ -2,9 +2,6 @@ package company
 
 import (
 	"errors"
-	"reflect"
-	"runtime"
-	"strings"
 )
 
 // specificTask interface registers all methods of task
@@ -155,28 +152,8 @@ func (task *Task) setStartDateTime() {
 	}
 
 	// Check for recursive call and panic.
-
-	// Get the program counter of current and previous method
-	// pc = Program counter
-	currentPC, _, _, currentIsValid := runtime.Caller(0)
-	previousPC, _, _, previousIsValid := runtime.Caller(1)
-
-	if !currentIsValid || !previousIsValid {
-		panic(errors.New("can't retrieve program counter of previous or current setStartDateTime"))
-	}
-
-	// Get the details of current and previous method from the program counter
-	currentDetail := runtime.FuncForPC(currentPC)
-	previousDetail := runtime.FuncForPC(previousPC)
-
-	// Split the details and get the last 2 elements which contain current method and type
-	currentNameType := strings.Split(currentDetail.Name(), ".")
-	previousNameType := strings.Split(previousDetail.Name(), ".")
-
-	// Compare the previous and current's name and type
-	// Panic if they are the same (infinite recursive call)
-	if reflect.DeepEqual(currentNameType, previousNameType) {
-		panic(errors.New("task does not contain setStartDateTime (missing implementation?)").Error())
+	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
+		panic(errors.New(err).Error())
 	}
 
 	// Call the overridden method
@@ -184,15 +161,15 @@ func (task *Task) setStartDateTime() {
 }
 
 // setStartDateTime for rolling task
-func (task *taskRolling) setStartDateTime() {
-	value := task.machine.company.dateTime
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
-}
+// func (task *taskRolling) setStartDateTime() {
+// 	value := task.machine.company.dateTime
+//
+// 	if task.PreviousTask() != nil {
+// 		value = task.PreviousTask().EndDateTime()
+// 	}
+//
+// 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+// }
 
 // setStartDateTime for cutting task
 func (task *taskCutting) setStartDateTime() {
