@@ -161,15 +161,15 @@ func (task *Task) setStartDateTime() {
 }
 
 // setStartDateTime for rolling task
-// func (task *taskRolling) setStartDateTime() {
-// 	value := task.machine.company.dateTime
-//
-// 	if task.PreviousTask() != nil {
-// 		value = task.PreviousTask().EndDateTime()
-// 	}
-//
-// 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
-// }
+func (task *taskRolling) setStartDateTime() {
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
+	}
+
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+}
 
 // setStartDateTime for cutting task
 func (task *taskCutting) setStartDateTime() {

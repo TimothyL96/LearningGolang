@@ -2,6 +2,7 @@ package company
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"runtime"
 	"strings"
@@ -167,4 +168,39 @@ func IsInfiniteRecursiveCall() (isInfinite bool, err string) {
 	}
 
 	return
+}
+
+// Traverse
+func Traverse(object interface{}, pathOfRelation string, logicToExecute func(interface{})) {
+	if reflect.ValueOf(object).Kind() != reflect.Ptr {
+		panic("non relation passed to first parameter for Traverse")
+	}
+	// Panic if first parameter is not unary
+
+	paths := strings.Split(pathOfRelation, ".")
+
+	for _, p := range paths {
+		fmt.Println("in for range " + p)
+		// Check if current value in object is slice
+		if reflect.ValueOf(object).Kind() == reflect.Slice {
+			fmt.Println("in slice")
+			var x []reflect.Value
+
+			for i := 0; i < reflect.ValueOf(object).Len(); i++ {
+				x = append(x, reflect.ValueOf(object).Elem().Index(0).MethodByName(p).Call(nil)[0])
+			}
+
+			object = x
+		} else {
+			fmt.Println("in else")
+			// Set the object to the current unary relation
+			object = reflect.ValueOf(object).MethodByName(p).Call(nil)[0].Interface()
+			fmt.Println(reflect.ValueOf(object))
+			fmt.Println(reflect.ValueOf(object).Index(0))
+			fmt.Println(reflect.ValueOf(object).Index(0).Kind() == reflect.Ptr)
+		}
+	}
+
+	// Test
+	fmt.Println(object)
 }

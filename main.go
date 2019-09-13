@@ -128,6 +128,8 @@ func testCompany(company *companyDataset.Company) {
 	m1 := company.CreateMachine("Golang first machine", 'R')
 	m2 := company.CreateMachine("Golang second machine", 'C')
 
+	fmt.Println(company)
+
 	t := m1.CreateTask(2)
 	for i := 1; i < 10; i++ {
 		t = m1.CreateTask(rand.Int() % 10000)
@@ -187,4 +189,6 @@ func testCompany(company *companyDataset.Company) {
 			}
 		}
 	}
+
+	companyDataset.Traverse(company, "Machines.Tasks", func(z interface{}) {})
 }
