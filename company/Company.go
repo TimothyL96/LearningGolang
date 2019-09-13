@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 
-	keyConfiguration "github.com/ttimt/GolangWebSocket/key"
+	keyConfiguration "github.com/ttimt/QuiLite/key"
 )
 
 // Map the Key struct from key package to the type key so it will be unexported
@@ -180,27 +180,34 @@ func Traverse(object interface{}, pathOfRelation string, logicToExecute func(int
 	paths := strings.Split(pathOfRelation, ".")
 
 	for _, p := range paths {
-		fmt.Println("in for range " + p)
 		// Check if current value in object is slice
 		if reflect.ValueOf(object).Kind() == reflect.Slice {
-			fmt.Println("in slice")
 			var x []reflect.Value
 
 			for i := 0; i < reflect.ValueOf(object).Len(); i++ {
-				x = append(x, reflect.ValueOf(object).Elem().Index(0).MethodByName(p).Call(nil)[0])
+				j := reflect.ValueOf(object).Index(i).MethodByName(p).Call(nil)[0].Interface()
+
+				for z := 0; z < reflect.ValueOf(j).Len(); z++ {
+					x = append(x, reflect.ValueOf(j).Index(z))
+				}
 			}
 
 			object = x
 		} else {
-			fmt.Println("in else")
 			// Set the object to the current unary relation
 			object = reflect.ValueOf(object).MethodByName(p).Call(nil)[0].Interface()
-			fmt.Println(reflect.ValueOf(object))
-			fmt.Println(reflect.ValueOf(object).Index(0))
-			fmt.Println(reflect.ValueOf(object).Index(0).Kind() == reflect.Ptr)
 		}
 	}
 
 	// Test
-	fmt.Println(object)
+	fmt.Println("Test ##############")
+	fmt.Println("Total tasks:", reflect.ValueOf(object).Len())
+	for i := 0; i < reflect.ValueOf(object).Len(); i++ {
+		x := reflect.ValueOf(object).Index(i)
+		// y := x.Interface()
+		fmt.Println(reflect.ValueOf(x))
+		fmt.Println(x.Kind() == reflect.Struct)
+		fmt.Println(x.Kind() == reflect.Ptr)
+		fmt.Println(x.MethodByName("Key").Call(nil)[0])
+	}
 }

@@ -1,7 +1,7 @@
 package company
 
 import (
-	keyConfiguration "github.com/ttimt/GolangWebSocket/key"
+	keyConfiguration "github.com/ttimt/QuiLite/key"
 )
 
 // KnifeSetting struct holds the field of a knife setting and is owned by company

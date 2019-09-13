@@ -3,7 +3,7 @@ package company
 import (
 	"errors"
 
-	keyConfiguration "github.com/ttimt/GolangWebSocket/key"
+	keyConfiguration "github.com/ttimt/QuiLite/key"
 )
 
 // Machine struct

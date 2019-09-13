@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	companyDataset "github.com/ttimt/GolangWebSocket/company"
+	companyDataset "github.com/ttimt/QuiLite/company"
 )
 
 // DataSetsStorage struct

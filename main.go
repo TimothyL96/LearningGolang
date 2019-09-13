@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"runtime/debug"
 
-	companyDataset "github.com/ttimt/GolangWebSocket/company"
+	companyDataset "github.com/ttimt/QuiLite/company"
 )
 
 // var counter int
