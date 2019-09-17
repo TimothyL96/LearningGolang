@@ -2,6 +2,8 @@ package company
 
 import (
 	"errors"
+
+	. "github.com/ttimt/QuiLite/stdlib"
 )
 
 // specificTask interface registers all methods of task
@@ -101,6 +103,15 @@ func (task *Task) NextTask() *Task {
 	}
 
 	return task.nextTask
+}
+
+// Machine returns the owner of the task
+func (task *Task) Machine() *Machine {
+	if task == nil {
+		return nil
+	}
+
+	return task.machine
 }
 
 // setEndDateTime is a declarative function that gets called when any of its binding is changed.

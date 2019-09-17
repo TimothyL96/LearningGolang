@@ -112,8 +112,8 @@ func (machine *Machine) Tasks() []*Task {
 	return machine.tasks
 }
 
-// MachineName returns the name of the machine
-func (machine *Machine) MachineName() string {
+// Name returns the name of the machine
+func (machine *Machine) Name() string {
 	if machine == nil {
 		panic(errors.New("machine is nil").Error())
 	}
@@ -121,8 +121,8 @@ func (machine *Machine) MachineName() string {
 	return machine.name
 }
 
-// MachineType returns the type of the machine
-func (machine *Machine) MachineType() byte {
+// Type returns the type of the machine
+func (machine *Machine) Type() byte {
 	if machine == nil {
 		panic(errors.New("machine is nil").Error())
 	}

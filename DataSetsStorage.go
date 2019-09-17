@@ -5,12 +5,12 @@ import (
 	"log"
 	"strings"
 
-	companyDataset "github.com/ttimt/QuiLite/company"
+	DScompany "github.com/ttimt/QuiLite/company"
 )
 
 // DataSetsStorage struct
 type DataSetsStorage struct {
-	Companies []*companyDataset.Company
+	Companies []*DScompany.Company
 }
 
 // DataSets abc
@@ -38,7 +38,7 @@ func createDataSet(DataSetKind string) interface{} {
 
 	switch strings.ToLower(DataSetKind) {
 	case "company":
-		DataSet = companyDataset.CreateCompany(1.0, 123)
+		DataSet = DScompany.CreateCompany(1.0, 123)
 	default:
 		log.Fatal("No such data set kind found!")
 	}

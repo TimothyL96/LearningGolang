@@ -6,7 +6,8 @@ import (
 	"math/rand"
 	"runtime/debug"
 
-	companyDataset "github.com/ttimt/QuiLite/company"
+	DSCompany "github.com/ttimt/QuiLite/company"
+	. "github.com/ttimt/QuiLite/stdlib"
 )
 
 // var counter int
@@ -105,7 +106,7 @@ func convertDataSet(DataSetKind string) {
 
 	// Server startup - Create the data set from the input using type assertion
 	// From here, we are assuming the dataset or string entered is "company"
-	DataSetInstance, succeed := (createDataSet(DataSetKind)).(*companyDataset.Company)
+	DataSetInstance, succeed := (createDataSet(DataSetKind)).(*DSCompany.Company)
 
 	if !succeed {
 		panic(errors.New("type assertion failed").Error())
@@ -123,10 +124,10 @@ func recoverPanic() {
 	}
 }
 
-func testCompany(company *companyDataset.Company) {
+func testCompany(company *DSCompany.Company) {
 	// Create a machine
-	m1 := company.CreateMachine("Golang first machine", 'R')
-	m2 := company.CreateMachine("Golang second machine", 'C')
+	m1 := company.CreateMachine("1st machine", 'R')
+	m2 := company.CreateMachine("2nd machine", 'C')
 
 	fmt.Println(company)
 
@@ -169,8 +170,8 @@ func testCompany(company *companyDataset.Company) {
 	for _, m := range company.Machines() {
 		fmt.Println("\n***************************************")
 		fmt.Println("Machine key: ", m.Key().String())
-		fmt.Println("Machine Name: ", m.MachineName())
-		fmt.Println("Machine Type: ", string(m.MachineType()))
+		fmt.Println("Machine Name: ", m.Name())
+		fmt.Println("Machine Type: ", string(m.Type()))
 		fmt.Println("Machine First Task: ", m.FirstTask().Key())
 		fmt.Println("Machine Last Task: ", m.LastTask().Key())
 
@@ -190,7 +191,9 @@ func testCompany(company *companyDataset.Company) {
 		}
 	}
 
-	companyDataset.Traverse(company, "Machines.Tasks", func(task *companyDataset.Task) {
-		fmt.Println("\nTask:", task.Key(), "start date time:", task.StartDateTime())
+	fmt.Println("\n~~~~~~~Start traverse:")
+	// Currently no filter available
+	Traverse(company, "Machines.Tasks", func(task *DSCompany.Task) {
+		fmt.Println("Task of:", task.Machine().Name(), "- Duration:", task.Duration())
 	})
 }

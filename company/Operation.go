@@ -2,6 +2,8 @@ package company
 
 import (
 	"errors"
+
+	. "github.com/ttimt/QuiLite/stdlib"
 )
 
 // specificOperation interface is the interface for all operations type.
