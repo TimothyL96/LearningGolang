@@ -33,10 +33,12 @@ func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...
 
 // Traverse
 func Traverse(object interface{}, pathOfRelation string, logicToExecute interface{}) {
-	if reflect.ValueOf(object).Kind() == reflect.Slice {
+	objectValue := reflect.ValueOf(object)
+
+	if objectValue.Kind() == reflect.Slice {
 		// Panic if first parameter is not unary
 		panic(errors.New("non unary relation in first parameter").Error())
-	} else if reflect.ValueOf(object).Kind() != reflect.Ptr {
+	} else if objectValue.Kind() != reflect.Ptr {
 		panic(errors.New("non relation passed to first parameter for Traverse").Error())
 	}
 
@@ -44,11 +46,13 @@ func Traverse(object interface{}, pathOfRelation string, logicToExecute interfac
 	paths := strings.Split(pathOfRelation, ".")
 
 	for _, p := range paths {
+		objectValue = reflect.ValueOf(object)
+
 		// Check if current value in object is slice
-		if reflect.ValueOf(object).Kind() == reflect.Slice {
+		if objectValue.Kind() == reflect.Slice {
 			instances = nil
-			for i := 0; i < reflect.ValueOf(object).Len(); i++ {
-				j := reflect.ValueOf(object).Index(i).MethodByName(p).Call(nil)[0].Interface()
+			for i := 0; i < objectValue.Len(); i++ {
+				j := objectValue.Index(i).MethodByName(p).Call(nil)[0].Interface()
 
 				for z := 0; z < reflect.ValueOf(j).Len(); z++ {
 					instances = append(instances, reflect.ValueOf(j).Index(z).Interface())
@@ -58,7 +62,7 @@ func Traverse(object interface{}, pathOfRelation string, logicToExecute interfac
 			object = reflect.ValueOf(instances)
 		} else {
 			// Set the object to the current unary relation
-			object = reflect.ValueOf(object).MethodByName(p).Call(nil)[0].Interface()
+			object = objectValue.MethodByName(p).Call(nil)[0].Interface()
 		}
 	}
 
