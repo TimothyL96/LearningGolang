@@ -2,7 +2,6 @@ package company
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"runtime"
 	"strings"
@@ -171,43 +170,35 @@ func IsInfiniteRecursiveCall() (isInfinite bool, err string) {
 }
 
 // Traverse
-func Traverse(object interface{}, pathOfRelation string, logicToExecute func(interface{})) {
+func Traverse(object interface{}, pathOfRelation string, logicToExecute interface{}) {
 	if reflect.ValueOf(object).Kind() != reflect.Ptr {
 		panic("non relation passed to first parameter for Traverse")
 	}
 	// Panic if first parameter is not unary
 
+	instances := make([]interface{}, 0)
 	paths := strings.Split(pathOfRelation, ".")
 
 	for _, p := range paths {
 		// Check if current value in object is slice
 		if reflect.ValueOf(object).Kind() == reflect.Slice {
-			var x []reflect.Value
-
+			instances = nil
 			for i := 0; i < reflect.ValueOf(object).Len(); i++ {
 				j := reflect.ValueOf(object).Index(i).MethodByName(p).Call(nil)[0].Interface()
 
 				for z := 0; z < reflect.ValueOf(j).Len(); z++ {
-					x = append(x, reflect.ValueOf(j).Index(z))
+					instances = append(instances, reflect.ValueOf(j).Index(z).Interface())
 				}
 			}
 
-			object = x
+			object = reflect.ValueOf(instances)
 		} else {
 			// Set the object to the current unary relation
 			object = reflect.ValueOf(object).MethodByName(p).Call(nil)[0].Interface()
 		}
 	}
 
-	// Test
-	fmt.Println("Test ##############")
-	fmt.Println("Total tasks:", reflect.ValueOf(object).Len())
-	for i := 0; i < reflect.ValueOf(object).Len(); i++ {
-		x := reflect.ValueOf(object).Index(i)
-		// y := x.Interface()
-		fmt.Println(reflect.ValueOf(x))
-		fmt.Println(x.Kind() == reflect.Struct)
-		fmt.Println(x.Kind() == reflect.Ptr)
-		fmt.Println(x.MethodByName("Key").Call(nil)[0])
+	for _, v := range instances {
+		reflect.ValueOf(logicToExecute).Call([]reflect.Value{reflect.ValueOf(v)})
 	}
 }

@@ -167,7 +167,7 @@ func testCompany(company *companyDataset.Company) {
 	// fmt.Println("Print all dataset:")
 	// DataSets.printAllDataSets()
 	for _, m := range company.Machines() {
-		fmt.Println("***************************************")
+		fmt.Println("\n***************************************")
 		fmt.Println("Machine key: ", m.Key().String())
 		fmt.Println("Machine Name: ", m.MachineName())
 		fmt.Println("Machine Type: ", string(m.MachineType()))
@@ -190,5 +190,7 @@ func testCompany(company *companyDataset.Company) {
 		}
 	}
 
-	companyDataset.Traverse(company, "Machines.Tasks", func(z interface{}) {})
+	companyDataset.Traverse(company, "Machines.Tasks", func(task *companyDataset.Task) {
+		fmt.Println("\nTask:", task.Key(), "start date time:", task.StartDateTime())
+	})
 }
