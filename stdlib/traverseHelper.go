@@ -19,7 +19,7 @@ func traverseRetrievePath(instance interface{}, relationPath string) []interface
 		if instanceValue.Kind() == reflect.Slice {
 			// Call the method for each instance in instance
 			for i := 0; i < instanceValue.Len(); i++ {
-				retrievedInstances = traverseInsertToSlice(reflect.ValueOf(instanceValue.Index(i).Interface()).MethodByName(path).Call(nil)[0].Interface(), retrievedInstances)
+				retrievedInstances = traverseInsertToSlice(reflect.ValueOf(instanceValue.Index(i).Interface()).MethodByName(path).Call(nil)[0].Interface(), retrievedInstances) // TODO check method exist
 			}
 		} else {
 			// Set the instance to the current unary relation

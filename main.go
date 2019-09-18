@@ -91,11 +91,15 @@ func main() {
 
 	// *********** QTQ declarative calculation
 	// Get input to create new data set
-	var DataSetKind string
+	var datasetKind string
 	fmt.Println("Enter a data set kind to be created (company):")
-	_, _ = fmt.Scanln(&DataSetKind)
+	_, _ = fmt.Scanln(&datasetKind)
 
-	convertDataSet(DataSetKind)
+	if datasetKind == "" {
+		datasetKind = "company"
+	}
+
+	convertDataSet(datasetKind)
 
 	fmt.Println("Back to main")
 	// End QTQ declarative calculation
@@ -199,7 +203,7 @@ func testCompany(company *DSCompany.Company) {
 	})
 
 	// Counter
-	x := Counter(company, "Machines.Tasks", func(t *DSCompany.Task) bool {
+	x := Counter(company, "Machines.Tasks.PreviousTask.Machine.Tasks", func(t *DSCompany.Task) bool {
 		return t.TaskType() == 'R'
 	})
 
