@@ -193,7 +193,7 @@ func testCompany(company *DSCompany.Company) {
 
 	fmt.Println("\n~~~~~~~Start traverse:")
 	// Currently no filter available
-	Traverse(company, "Machines.Tasks", func(task *DSCompany.Task) {
+	Traverse(company, "Machines.FirstTask.NextTask.Machine.Tasks", func(task *DSCompany.Task) {
 		fmt.Println("Task of:", task.Machine().Name(), "- Duration:", task.Duration())
 	})
 }

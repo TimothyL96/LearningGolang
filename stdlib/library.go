@@ -7,68 +7,68 @@ import (
 	"strings"
 )
 
-// CalcDeclarative accepts 3 parameters where the first 2 are compared to see if their value are different.
-//
-// If the value is different, the value of the 2nd parameter will be set to the first parameter, then the slice of functions in parameter 3 will all be executed.
-//
-// The first and second parameter must always be a pointer
-func CalcDeclarative(currentValue interface{}, delta interface{}, funcToRuns ...func()) {
-	if reflect.TypeOf(currentValue).Kind() != reflect.Ptr || reflect.TypeOf(delta).Kind() != reflect.Ptr {
-		panic(errors.New("non pointer value received when calculating function").Error())
+// Traverse
+func Traverse(instance interface{}, relationPath string, logicToExecute interface{}) {
+	instanceValue := reflect.ValueOf(instance)
+
+	if instanceValue.Kind() == reflect.Slice {
+		// Panic if first parameter is not unary
+		panic(errors.New("non unary relation in first parameter").Error())
+	} else if instanceValue.Kind() != reflect.Ptr {
+		panic(errors.New("non relation passed to first parameter for Traverse").Error())
+	} else if reflect.ValueOf(logicToExecute).Kind() != reflect.Func {
+		panic(errors.New("non function passed to parameter 3").Error())
 	}
 
-	// Get the pointer of the two values
-	currentValuePtr := reflect.ValueOf(currentValue)
-	deltaPtr := reflect.ValueOf(delta)
+	var retrievedInstances []interface{}
+	paths := strings.Split(relationPath, ".")
 
-	if currentValuePtr.Elem().Interface() != deltaPtr.Elem().Interface() {
-		currentValuePtr.Elem().Set(deltaPtr.Elem())
+	// Go through all the paths in parameter two
+	for _, path := range paths {
+		instanceValue = reflect.ValueOf(instance)
+		retrievedInstances = nil
 
-		// Run all the functions to propagate
-		for _, funcToRun := range funcToRuns {
-			funcToRun()
+		// Check if current value in instance is slice
+		if instanceValue.Kind() == reflect.Slice {
+			// Call the method for each instance in instance
+			for i := 0; i < instanceValue.Len(); i++ {
+				retrievedInstances = traverseInsertToSlice(reflect.ValueOf(instanceValue.Index(i).Interface()).MethodByName(path).Call(nil)[0].Interface(), retrievedInstances)
+			}
+		} else {
+			// Set the instance to the current unary relation
+			retrievedInstances = traverseInsertToSlice(instanceValue.MethodByName(path).Call(nil)[0].Interface(), retrievedInstances)
 		}
+
+		// Update instance with the next set of retrievedInstances to be traversed
+		instance = retrievedInstances
+	}
+
+	for _, instance := range retrievedInstances {
+		instanceValue := reflect.ValueOf(instance)
+
+		// Avoid nil instance
+		if instanceValue.IsNil() {
+			continue
+		}
+
+		// Execute the logic of traverse
+		reflect.ValueOf(logicToExecute).Call([]reflect.Value{instanceValue}) // see if possible to check for type assertion error
 	}
 }
 
-// Traverse
-func Traverse(object interface{}, pathOfRelation string, logicToExecute interface{}) {
-	objectValue := reflect.ValueOf(object)
+// If retrieve value is slice, traverse them 1 by 1 to store them
+func traverseInsertToSlice(retrievedInstance interface{}, storeSlice []interface{}) []interface{} {
+	retrievedInstanceValue := reflect.ValueOf(retrievedInstance)
 
-	if objectValue.Kind() == reflect.Slice {
-		// Panic if first parameter is not unary
-		panic(errors.New("non unary relation in first parameter").Error())
-	} else if objectValue.Kind() != reflect.Ptr {
-		panic(errors.New("non relation passed to first parameter for Traverse").Error())
-	}
-
-	instances := make([]interface{}, 0)
-	paths := strings.Split(pathOfRelation, ".")
-
-	for _, p := range paths {
-		objectValue = reflect.ValueOf(object)
-
-		// Check if current value in object is slice
-		if objectValue.Kind() == reflect.Slice {
-			instances = nil
-			for i := 0; i < objectValue.Len(); i++ {
-				j := objectValue.Index(i).MethodByName(p).Call(nil)[0].Interface()
-
-				for z := 0; z < reflect.ValueOf(j).Len(); z++ {
-					instances = append(instances, reflect.ValueOf(j).Index(z).Interface())
-				}
-			}
-
-			object = reflect.ValueOf(instances)
-		} else {
-			// Set the object to the current unary relation
-			object = objectValue.MethodByName(p).Call(nil)[0].Interface()
+	if retrievedInstanceValue.Kind() == reflect.Slice {
+		for i := 0; i < retrievedInstanceValue.Len(); i++ {
+			storeSlice = append(storeSlice, retrievedInstanceValue.Index(i).Interface())
 		}
+	} else {
+		storeSlice = append(storeSlice, retrievedInstanceValue.Interface())
 	}
 
-	for _, instance := range instances {
-		reflect.ValueOf(logicToExecute).Call([]reflect.Value{reflect.ValueOf(instance)})
-	}
+	return storeSlice
 }
 
 // IsInfiniteRecursiveCall method will check for recursive call and panic
