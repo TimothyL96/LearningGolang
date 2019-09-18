@@ -88,3 +88,27 @@ func Counter(instance interface{}, relationPath string, logicToExecute interface
 
 	return
 }
+
+// Select will select the first instance that matches the filter
+func Select(instance interface{}, relationPath string, logicToExecute interface{}) (returnInstance interface{}) {
+	if isValid, err := traverseCheckError(instance, logicToExecute); !isValid {
+		panic(errors.New(err).Error())
+	}
+
+	// Get all elements from path
+	retrievedInstances := traverseRetrievePath(instance, relationPath)
+
+	// Execute the logic of traverse for every instance
+	for _, instance := range retrievedInstances {
+		instanceValue := reflect.ValueOf(instance)
+
+		// Avoid nil instance
+		if instanceValue.IsNil() || !reflect.ValueOf(logicToExecute).Call([]reflect.Value{instanceValue})[0].Interface().(bool) {
+			continue
+		}
+
+		return instance
+	}
+
+	return
+}

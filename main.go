@@ -191,7 +191,8 @@ func testCompany(company *DSCompany.Company) {
 		}
 	}
 
-	fmt.Println("\n~~~~~~~Start traverse:")
+	fmt.Println()
+	fmt.Println("~~~~~~~Start traverse:")
 	// Currently no filter available
 	Traverse(company, "Machines.FirstTask.NextTask.Machine.Tasks", func(task *DSCompany.Task) {
 		fmt.Println("Task of:", task.Machine().Name(), "- Duration:", task.Duration())
@@ -202,5 +203,18 @@ func testCompany(company *DSCompany.Company) {
 		return t.TaskType() == 'R'
 	})
 
+	fmt.Println()
+	fmt.Println("Counter quantor")
 	fmt.Println("Result of counter:", x)
+
+	// Select
+	s := Select(company, "Machines", func(m *DSCompany.Machine) bool {
+		return m.Name() == "1st machine"
+	}).(*DSCompany.Machine)
+
+	fmt.Println()
+	fmt.Println("Select quantor")
+	fmt.Println("Selected machine:")
+	fmt.Println("Name -", s.Name())
+	fmt.Println("Type -", string(s.Type()))
 }
