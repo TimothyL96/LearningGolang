@@ -126,6 +126,25 @@ func traverseCheckError(instance interface{}, logicToExecute interface{}) (isVal
 }
 
 // Counter counts all the elements with the filter applied
-func Counter(instance interface{}, relationPath string, logicToExecute interface{}) int {
-	return 0
+func Counter(instance interface{}, relationPath string, logicToExecute interface{}) (count int) {
+	if isValid, err := traverseCheckError(instance, logicToExecute); !isValid {
+		panic(errors.New(err).Error())
+	}
+
+	// Get all elements from path
+	retrievedInstances := traverseRetrievePath(instance, relationPath)
+
+	// Execute the logic of traverse for every instance
+	for _, instance := range retrievedInstances {
+		instanceValue := reflect.ValueOf(instance)
+
+		// Avoid nil instance
+		if instanceValue.IsNil() || !reflect.ValueOf(logicToExecute).Call([]reflect.Value{instanceValue})[0].Interface().(bool) {
+			continue
+		}
+
+		count++
+	}
+
+	return
 }

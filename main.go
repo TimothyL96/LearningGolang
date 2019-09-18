@@ -196,4 +196,11 @@ func testCompany(company *DSCompany.Company) {
 	Traverse(company, "Machines.FirstTask.NextTask.Machine.Tasks", func(task *DSCompany.Task) {
 		fmt.Println("Task of:", task.Machine().Name(), "- Duration:", task.Duration())
 	})
+
+	// Counter
+	x := Counter(company, "Machines.Tasks", func(t *DSCompany.Task) bool {
+		return t.TaskType() == 'R'
+	})
+
+	fmt.Println("Result of counter:", x)
 }
