@@ -28,8 +28,14 @@ func traverseRetrievePath(instance interface{}, relationPath string) []interface
 				retrievedInstances = traverseInsertToSlice(methodToCall.Call(nil)[0].Interface(), retrievedInstances)
 			}
 		} else {
+			methodToCall := instanceValue.MethodByName(path)
+
+			if !methodToCall.IsValid() {
+				panic(errors.New("relation error: " + path).Error())
+			}
+
 			// Set the instance to the current unary relation
-			retrievedInstances = traverseInsertToSlice(instanceValue.MethodByName(path).Call(nil)[0].Interface(), retrievedInstances)
+			retrievedInstances = traverseInsertToSlice(methodToCall.Call(nil)[0].Interface(), retrievedInstances)
 		}
 
 		// Update instance with the next set of retrievedInstances to be traversed

@@ -7,15 +7,15 @@ import (
 )
 
 // specificOperation interface is the interface for all operations type.
-// This allows polymorphism for 1 operation type to other operation type
+// This allows polymorphism for 1 operations type to other operations type
 type specificOperation interface {
-	FirstOperation() *Operation
-	LastOperation() *Operation
+	PreviousOperation() *Operation
+	NextOperation() *Operation
 	PaperRoll() *PaperRoll
 	Order() *Order
 }
 
-// Operation struct is the struct for operation
+// Operation struct is the struct for operations
 type Operation struct {
 	key
 	isPlanned     bool
@@ -25,13 +25,13 @@ type Operation struct {
 	specificOperation
 
 	// Relation
-	firstOperation *Operation
-	lastOperation  *Operation
+	previousOperation *Operation
+	nextOperation     *Operation
 
 	task *Task
 }
 
-// operationRollingCutting is the base struct for rolling and cutting operation
+// operationRollingCutting is the base struct for rolling and cutting operations
 type operationRollingCutting struct {
 	specificOperation
 
@@ -39,7 +39,7 @@ type operationRollingCutting struct {
 	paperRoll *PaperRoll
 }
 
-// operationFoldingPacking is the base struct for folding and packing operation
+// operationFoldingPacking is the base struct for folding and packing operations
 type operationFoldingPacking struct {
 	specificOperation
 
@@ -47,59 +47,68 @@ type operationFoldingPacking struct {
 	order *Order
 }
 
-// operationRolling is the struct for rolling operation
+// operationRolling is the struct for rolling operations
 type operationRolling struct {
 	*Operation
 }
 
-// operationCutting is the struct for cutting operation
+// operationCutting is the struct for cutting operations
 type operationCutting struct {
 	*Operation
 }
 
-// operationFolding is the struct for folding operation
+// operationFolding is the struct for folding operations
 type operationFolding struct {
 	*Operation
 }
 
-// operationPacking is the struct for packing operation
+// operationPacking is the struct for packing operations
 type operationPacking struct {
 	*Operation
 }
 
-// SetIsPlanned accepts a bool parameter and sets it to the operation isPlanned field
-func (op *Operation) SetIsPlanned(isPlanned bool) {
+// setIsPlanned accepts a bool parameter and sets it to the operations isPlanned field
+func (op *Operation) setIsPlanned(isPlanned bool) {
 	op.isPlanned = isPlanned
 }
 
-// IsPlanned gets the isPlanned value of the operation
-func (op *Operation) IsPlanned() *bool {
+// IsPlanned gets the isPlanned value of the operations
+func (op *Operation) IsPlanned() bool {
+	if op == nil {
+		panic(errors.New("operation is null").Error())
+	}
+
+	return op.isPlanned
+}
+
+// OperationType returns the operation type of the operation
+func (op *Operation) OperationType() byte {
+	if op == nil {
+		panic(errors.New("operation is null").Error())
+	}
+
+	return op.operationType
+}
+
+// PreviousOperation returns the first operations of the operations like rolling or folding
+func (op *Operation) PreviousOperation() *Operation {
 	if op == nil {
 		return nil
 	}
 
-	return &op.isPlanned
+	return op.previousOperation
 }
 
-// FirstOperation returns the first operation of the operation like rolling or folding
-func (op *Operation) FirstOperation() *Operation {
+// NextOperation returns the last operations of the operations like cutting or packing
+func (op *Operation) NextOperation() *Operation {
 	if op == nil {
 		return nil
 	}
 
-	return op.firstOperation
+	return op.nextOperation
 }
 
-// LastOperation returns the last operation of the operation like cutting or packing
-func (op *Operation) LastOperation() *Operation {
-	if op == nil {
-		return nil
-	}
-
-	return op.lastOperation
-}
-
-// PaperRoll is the base method and returns the paper roll of the specific operation
+// PaperRoll is the base method and returns the paper roll of the specific operations
 func (op *Operation) PaperRoll() *PaperRoll {
 	if op == nil {
 		return nil
@@ -118,10 +127,15 @@ func (op *operationRollingCutting) PaperRoll() *PaperRoll {
 	return op.paperRoll
 }
 
-// Order is the base method and returns the order of the specific operation
+// Order is the base method and returns the order of the specific operations
 func (op *Operation) Order() *Order {
 	if op == nil {
 		return nil
+	}
+
+	// Check for recursive call and panic.
+	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
+		panic(errors.New(err).Error())
 	}
 
 	return op.specificOperation.Order()
@@ -136,11 +150,21 @@ func (op *operationFoldingPacking) Order() *Order {
 	return op.order
 }
 
-// Task returns the task of the operation
+// Task returns the task of the operations
 func (op *Operation) Task() *Task {
 	if op == nil {
 		return nil
 	}
 
 	return op.task
+}
+
+// setPreviousOperation sets the first operations for the operations
+func (op *Operation) setPreviousOperation(operation *Operation) {
+	op.previousOperation = operation
+}
+
+// setNextOperation sets the first operations for the operations
+func (op *Operation) setNextOperation(operation *Operation) {
+	op.nextOperation = operation
 }

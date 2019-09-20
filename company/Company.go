@@ -18,7 +18,8 @@ type Company struct {
 
 	// Owning objects
 	machines      []*Machine
-	KnifeSettings []*KnifeSetting
+	knifeSettings []*KnifeSetting
+	orders        []*Order
 }
 
 // CreateCompany creates the root company instance and returns a pointer of it
@@ -28,7 +29,7 @@ func CreateCompany(version float32, dateTime int) *Company {
 		version:       version,
 		dateTime:      dateTime,
 		machines:      nil,
-		KnifeSettings: nil,
+		knifeSettings: nil,
 	}
 
 	return company
@@ -59,30 +60,41 @@ func (company *Company) CreateMachine(name string, machineType byte) *Machine {
 }
 
 // CreateKnifeSetting creates a knife setting owned by the company
-func (company *Company) CreateKnifeSetting(numberOfCut, color int) *KnifeSetting {
+func (company *Company) CreateKnifeSetting(numberOfCut, color, repetition int) *KnifeSetting {
 	knifeSetting := &KnifeSetting{
 		key:         keyConfiguration.NewKey(),
 		numberOfCut: numberOfCut,
 		color:       color,
+		repetition:  repetition,
 		company:     company,
 		paperRoll:   nil,
 		orders:      nil,
 	}
 
+	// Add it to company unsorted
+	company.knifeSettings = append(company.knifeSettings, knifeSetting)
+
 	return knifeSetting
 }
 
 // CreateOrder creates an order owned by the company
-func (company *Company) CreateOrder(ID, color, quantity, dueDate int) *Order {
+func (company *Company) CreateOrder(id, color, quantity, dueDate, fulfilledQuantity int) *Order {
 	order := &Order{
-		key:          keyConfiguration.NewKey(),
-		ID:           ID,
-		color:        color,
-		quantity:     quantity,
-		dueDate:      dueDate,
-		company:      company,
-		knifeSetting: nil,
+		key:               keyConfiguration.NewKey(),
+		id:                id,
+		color:             color,
+		quantity:          quantity,
+		dueDate:           dueDate,
+		fulfilledQuantity: fulfilledQuantity,
+		company:           company,
+		knifeSetting:      nil,
 	}
+
+	// Add it to company unsorted
+	company.orders = append(company.orders, order)
+
+	// Create operations for order
+	order.createOperation()
 
 	return order
 }
@@ -104,4 +116,14 @@ func (company *Company) SetDateTime(dateTime int) {
 // Machines will return all machines owned by this company
 func (company *Company) Machines() []*Machine {
 	return company.machines
+}
+
+// Orders will return all orders owned by this company
+func (company *Company) Orders() []*Order {
+	return company.orders
+}
+
+// knifeSettings will return all knife settings owned by this company
+func (company *Company) KnifeSettings() []*KnifeSetting {
+	return company.knifeSettings
 }

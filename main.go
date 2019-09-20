@@ -133,40 +133,29 @@ func testCompany(company *DSCompany.Company) {
 	m1 := company.CreateMachine("1st machine", 'R')
 	m2 := company.CreateMachine("2nd machine", 'C')
 
-	fmt.Println(company)
-
-	t := m1.CreateTask(2)
 	for i := 1; i < 10; i++ {
-		t = m1.CreateTask(rand.Int() % 10000)
+		m1.CreateTask(rand.Int() % 10000)
 	}
 	m2.CreateTask(2)
 	m2.CreateTask(7)
 	m2.CreateTask(3)
 
-	// Print out last task of machine1
-	// Change the duration
-	// Then print out the task again
-	fmt.Println("FIRST print ######################")
-	fmt.Println("Task key: ", t.Key().String())
-	fmt.Println("Task type: ", string(t.TaskType()))
-	fmt.Println("Duration: ", t.Duration())
-	fmt.Println("Start date time: ", t.StartDateTime())
-	fmt.Println("End date time: ", t.EndDateTime())
-	fmt.Println("Previous task: ", t.PreviousTask().Key())
-	if t.NextTask() != nil {
-		fmt.Println("Next task: ", t.NextTask().Key())
+	// Create orders
+	for i := 1; i <= 30; i++ {
+		company.CreateOrder(i, rand.Int()%5, 5, 10, 2)
 	}
 
-	t.SetDuration(10)
-	fmt.Println("SECOND print #######################")
-	fmt.Println("Task key: ", t.Key().String())
-	fmt.Println("Task type: ", string(t.TaskType()))
-	fmt.Println("Duration: ", t.Duration())
-	fmt.Println("Start date time: ", t.StartDateTime())
-	fmt.Println("End date time: ", t.EndDateTime())
-	fmt.Println("Previous task: ", t.PreviousTask().Key())
-	if t.NextTask() != nil {
-		fmt.Println("Next task: ", t.NextTask().Key())
+	// Create knife settings
+	for i := 1; i <= 15; i++ {
+		ks := company.CreateKnifeSetting(rand.Int()%10+1, rand.Int()%5, rand.Int()%20+1)
+
+		ks.AssignOrder(Select(company, "Orders", func(order *DSCompany.Order) bool {
+			return order.ID() == i
+		}).(*DSCompany.Order))
+
+		ks.AssignOrder(Select(company, "Orders", func(order *DSCompany.Order) bool {
+			return order.ID() == i+15
+		}).(*DSCompany.Order))
 	}
 
 	// fmt.Println("Print all dataset:")
@@ -196,10 +185,33 @@ func testCompany(company *DSCompany.Company) {
 	}
 
 	fmt.Println()
-	fmt.Println("~~~~~~~Start traverse:")
-	// Currently no filter available
-	Traverse(company, "Machines.FirstTask.NextTask.Machine.Tasks", func(task *DSCompany.Task) {
-		fmt.Println("Task of:", task.Machine().Name(), "- Duration:", task.Duration())
+
+	// Print orders
+	Traverse(company, "Orders", func(order *DSCompany.Order) {
+		fmt.Println("Order:", order.ID())
+		fmt.Println("Knife setting of order:", order.KnifeSetting().Key())
+		fmt.Println("Operation folding:")
+		fmt.Println(order.FirstOperation().Key())
+		fmt.Println(order.FirstOperation().IsPlanned())
+		fmt.Println("Operation packing:")
+		fmt.Println(order.LastOperation().Key())
+		fmt.Println(order.LastOperation().IsPlanned())
+		fmt.Println("Order.Operation.OrderID", order.LastOperation().Order().ID())
+	})
+
+	// Print knife settings and paper roll
+	Traverse(company, "KnifeSettings", func(ks *DSCompany.KnifeSetting) {
+		ks.CreatePaperRoll(ks.Color(), ks.NumberOfCut()*ks.Repetition())
+		fmt.Println("Knife setting:", ks.Key().String(), ks.Color())
+		fmt.Println("Paper roll:", ks.PaperRoll().Key().String(), "Length:", ks.PaperRoll().Length())
+		fmt.Println("Operation rolling:")
+		fmt.Println(ks.PaperRoll().FirstOperation().Key())
+		fmt.Println(ks.PaperRoll().FirstOperation().IsPlanned())
+		fmt.Println(string(ks.PaperRoll().FirstOperation().OperationType()))
+		fmt.Println("Operation cutting:")
+		fmt.Println(ks.PaperRoll().LastOperation().Key())
+		fmt.Println(ks.PaperRoll().LastOperation().IsPlanned())
+		fmt.Println(string(ks.PaperRoll().LastOperation().OperationType()))
 	})
 
 	// Counter

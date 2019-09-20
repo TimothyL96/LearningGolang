@@ -1,6 +1,8 @@
 package company
 
 import (
+	"errors"
+
 	keyConfiguration "github.com/ttimt/QuiLite/key"
 )
 
@@ -22,13 +24,88 @@ type KnifeSetting struct {
 }
 
 // CreatePaperRoll creates a paper roll owned by this knife setting
-func (knifeSetting *KnifeSetting) CreatePaperRoll(color int, length int) *PaperRoll {
+func (ks *KnifeSetting) CreatePaperRoll(color int, length int) *PaperRoll {
 	paperRoll := &PaperRoll{
 		key:          keyConfiguration.NewKey(),
 		color:        color,
-		knifeSetting: knifeSetting,
 		length:       length,
+		knifeSetting: ks,
 	}
 
+	// Create operations for paper roll
+	paperRoll.createOperation()
+
+	// Append paper roll
+	ks.paperRoll = paperRoll
+
 	return paperRoll
+}
+
+// Company returns the company of knife setting
+func (ks *KnifeSetting) Company() *Company {
+	if ks == nil {
+		return nil
+	}
+
+	return ks.company
+}
+
+// PaperRoll returns the paper roll of the knife setting
+func (ks *KnifeSetting) PaperRoll() *PaperRoll {
+	if ks == nil {
+		return nil
+	}
+
+	return ks.paperRoll
+}
+
+// Orders return the orders of the knife setting
+func (ks *KnifeSetting) Orders() []*Order {
+	if ks == nil {
+		return nil
+	}
+
+	return ks.orders
+}
+
+// Color returns the color of the knife setting
+func (ks *KnifeSetting) Color() int {
+	if ks == nil {
+		panic(errors.New("knife setting is nil").Error())
+	}
+
+	return ks.color
+}
+
+// NumberOfCut returns the number of cut of the knife setting
+func (ks *KnifeSetting) NumberOfCut() int {
+	if ks == nil {
+		panic(errors.New("knife setting is nil").Error())
+	}
+
+	return ks.numberOfCut
+}
+
+// Repetition returns the repetition of the knife setting
+func (ks *KnifeSetting) Repetition() int {
+	if ks == nil {
+		panic(errors.New("knife setting is nil").Error())
+	}
+
+	return ks.repetition
+}
+
+// AssignOrder will assign order to this knife setting
+func (ks *KnifeSetting) AssignOrder(order *Order) {
+	if len(ks.orders) > 3 {
+		panic(errors.New("knife setting max order reached").Error()) // constraint
+	}
+
+	order.setKnifeSetting(ks)
+	ks.setOrders(append(ks.Orders(), order))
+}
+
+// setOrders will set the orders to this knife setting
+func (ks *KnifeSetting) setOrders(orders []*Order) {
+	ks.orders = orders
 }
