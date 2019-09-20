@@ -27,6 +27,8 @@ type Operation struct {
 	// Relation
 	firstOperation *Operation
 	lastOperation  *Operation
+
+	task *Task
 }
 
 // operationRollingCutting is the base struct for rolling and cutting operation
@@ -127,5 +129,18 @@ func (op *Operation) Order() *Order {
 
 // Order returns the order of OperationFoldingCutting
 func (op *operationFoldingPacking) Order() *Order {
+	if op == nil {
+		return nil
+	}
+
 	return op.order
+}
+
+// Task returns the task of the operation
+func (op *Operation) Task() *Task {
+	if op == nil {
+		return nil
+	}
+
+	return op.task
 }

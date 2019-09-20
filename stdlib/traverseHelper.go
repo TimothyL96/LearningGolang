@@ -1,6 +1,7 @@
 package stdlib
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -19,7 +20,12 @@ func traverseRetrievePath(instance interface{}, relationPath string) []interface
 		if instanceValue.Kind() == reflect.Slice {
 			// Call the method for each instance in instance
 			for i := 0; i < instanceValue.Len(); i++ {
-				retrievedInstances = traverseInsertToSlice(reflect.ValueOf(instanceValue.Index(i).Interface()).MethodByName(path).Call(nil)[0].Interface(), retrievedInstances) // TODO check method exist
+				methodToCall := reflect.ValueOf(instanceValue.Index(i).Interface()).MethodByName(path)
+
+				if !methodToCall.IsValid() {
+					panic(errors.New("relation error: " + path).Error())
+				}
+				retrievedInstances = traverseInsertToSlice(methodToCall.Call(nil)[0].Interface(), retrievedInstances)
 			}
 		} else {
 			// Set the instance to the current unary relation
