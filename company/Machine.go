@@ -147,3 +147,19 @@ func (machine *Machine) LastTask() *Task {
 
 	return machine.lastTask
 }
+
+func (machine *Machine) Plan() {
+
+}
+
+func (machine *Machine) UnPlan() {
+
+}
+
+func (machine *Machine) moveBeforeTask() {
+
+}
+
+func (machine *Machine) moveAfterTask() {
+
+}

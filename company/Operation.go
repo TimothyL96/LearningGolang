@@ -159,6 +159,11 @@ func (op *Operation) Task() *Task {
 	return op.task
 }
 
+// setTask sets the task for the current operation
+func (op *Operation) setTask(task *Task) {
+
+}
+
 // setPreviousOperation sets the first operations for the operations
 func (op *Operation) setPreviousOperation(operation *Operation) {
 	op.previousOperation = operation

@@ -130,15 +130,10 @@ func recoverPanic() {
 
 func testCompany(company *DSCompany.Company) {
 	// Create a machine
-	m1 := company.CreateMachine("1st machine", 'R')
-	m2 := company.CreateMachine("2nd machine", 'C')
-
-	for i := 1; i < 10; i++ {
-		m1.CreateTask(rand.Int() % 10000)
-	}
-	m2.CreateTask(2)
-	m2.CreateTask(7)
-	m2.CreateTask(3)
+	company.CreateMachine("1st machine", 'R')
+	company.CreateMachine("2nd machine", 'C')
+	company.CreateMachine("3rd machine", 'C')
+	company.CreateMachine("4th machine", 'P')
 
 	// Create orders
 	for i := 1; i <= 30; i++ {
@@ -167,21 +162,6 @@ func testCompany(company *DSCompany.Company) {
 		fmt.Println("Machine Type: ", string(m.Type()))
 		fmt.Println("Machine First Task: ", m.FirstTask().Key())
 		fmt.Println("Machine Last Task: ", m.LastTask().Key())
-
-		for _, t := range m.Tasks() {
-			fmt.Println("******")
-			fmt.Println("Task key: ", t.Key().String())
-			fmt.Println("Task type: ", string(t.TaskType()))
-			fmt.Println("Duration: ", t.Duration())
-			fmt.Println("Start date time: ", t.StartDateTime())
-			fmt.Println("End date time: ", t.EndDateTime())
-			if t.PreviousTask() != nil {
-				fmt.Println("Previous task: ", t.PreviousTask().Key())
-			}
-			if t.NextTask() != nil {
-				fmt.Println("Next task: ", t.NextTask().Key())
-			}
-		}
 	}
 
 	fmt.Println()
@@ -213,24 +193,4 @@ func testCompany(company *DSCompany.Company) {
 		fmt.Println(ks.PaperRoll().LastOperation().IsPlanned())
 		fmt.Println(string(ks.PaperRoll().LastOperation().OperationType()))
 	})
-
-	// Counter
-	x := Counter(company, "Machines.Tasks.PreviousTask.Machine.Tasks", func(t *DSCompany.Task) bool {
-		return t.TaskType() == 'R'
-	})
-
-	fmt.Println()
-	fmt.Println("Counter quantor")
-	fmt.Println("Result of counter:", x)
-
-	// Select
-	s := Select(company, "Machines", func(m *DSCompany.Machine) bool {
-		return m.Name() == "1st machine"
-	}).(*DSCompany.Machine)
-
-	fmt.Println()
-	fmt.Println("Select quantor")
-	fmt.Println("Selected machine:")
-	fmt.Println("Name -", s.Name())
-	fmt.Println("Type -", string(s.Type()))
 }
