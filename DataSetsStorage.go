@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	DScompany "github.com/ttimt/QuiLite/company"
+	DScompany "github.com/ttimt/LearningGolang/company"
 )
 
 // DataSetsStorage struct

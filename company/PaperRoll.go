@@ -3,7 +3,7 @@ package company
 import (
 	"errors"
 
-	keyConfiguration "github.com/ttimt/QuiLite/key"
+	keyConfiguration "github.com/ttimt/LearningGolang/key"
 )
 
 // PaperRoll is the struct for paper roll

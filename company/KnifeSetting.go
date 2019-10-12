@@ -3,7 +3,7 @@ package company
 import (
 	"errors"
 
-	keyConfiguration "github.com/ttimt/QuiLite/key"
+	keyConfiguration "github.com/ttimt/LearningGolang/key"
 )
 
 // KnifeSetting struct holds the field of a knife setting and is owned by company

@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"runtime/debug"
 
-	DSCompany "github.com/ttimt/QuiLite/company"
-	. "github.com/ttimt/QuiLite/stdlib"
+	DSCompany "github.com/ttimt/LearningGolang/company"
+	. "github.com/ttimt/LearningGolang/stdlib"
 )
 
 // var counter int

@@ -3,7 +3,7 @@ package company
 import (
 	"errors"
 
-	. "github.com/ttimt/QuiLite/stdlib"
+	. "github.com/ttimt/LearningGolang/stdlib"
 )
 
 // specificTask interface registers all methods of task

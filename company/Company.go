@@ -3,7 +3,7 @@ package company
 import (
 	"errors"
 
-	keyConfiguration "github.com/ttimt/QuiLite/key"
+	keyConfiguration "github.com/ttimt/LearningGolang/key"
 )
 
 // Map the Key struct from key package to the type key so it will be unexported
