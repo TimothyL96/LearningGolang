@@ -32,6 +32,20 @@ func TestRun3(t *testing.T) {
 	RunHelper(got, want, t)
 }
 
+func TestRun4(t *testing.T) {
+	got := run(56, 10, "3 40 2 20 100 25 20 10 -1 -2")
+	want := 56
+
+	RunHelper(got, want, t)
+}
+
+func TestRun5(t *testing.T) {
+	got := run(56, 10, "3 40 2 20 100 25 20 10 -1 -4")
+	want := 56
+
+	RunHelper(got, want, t)
+}
+
 func RunHelper(got, want int, t *testing.T) {
 	t.Helper()
 
