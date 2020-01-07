@@ -87,7 +87,7 @@ func buildTree(preOrder, inOrder []int) *TreeNode {
 	lastRight = parent
 
 	// Recursively call Right side of tree/array to build the tree and set it as parent Right
-	if len(preOrder) > 0 && len(inOrder) > lastPreArrPosition+1 {
+	if len(preOrder) > 0 {
 		lastRight.Right = buildTree(preOrder[lastPreArrPosition+1:], inOrder[lastPreArrPosition+1:])
 		lastRight = lastRight.Right
 	}

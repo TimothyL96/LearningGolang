@@ -155,62 +155,48 @@ func (task *Task) SetPreviousTask(newTask *Task) {
 //
 // Check interface for nil before getting the derived method.
 // Also check for recursive call and panic in case derived struct does not implement the method
-func (task *Task) setStartDateTime() {
-	if task == nil {
-		return
-	} else if task.specificTask == nil {
-		panic(errors.New("fatal error: task does not have specific task").Error())
+// func (task *Task) setStartDateTime() {
+// 	if task == nil {
+// 		return
+// 	} else if task.specificTask == nil {
+// 		panic(errors.New("fatal error: task does not have specific task").Error())
+// 	}
+//
+// 	// Check for recursive call and panic.
+// 	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
+// 		panic(errors.New(err).Error())
+// 	}
+//
+// 	// Call the overridden method
+// 	task.specificTask.setStartDateTime()
+// }
+
+func (task *Task) baseSetStartDateTime() {
+	value := task.machine.company.dateTime
+
+	if task.PreviousTask() != nil {
+		value = task.PreviousTask().EndDateTime()
 	}
 
-	// Check for recursive call and panic.
-	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
-		panic(errors.New(err).Error())
-	}
-
-	// Call the overridden method
-	task.specificTask.setStartDateTime()
+	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
 // setStartDateTime for rolling task
 func (task *taskRolling) setStartDateTime() {
-	value := task.machine.company.dateTime
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	task.baseSetStartDateTime()
 }
 
 // setStartDateTime for cutting task
 func (task *taskCutting) setStartDateTime() {
-	value := task.machine.company.dateTime
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	task.baseSetStartDateTime()
 }
 
 // setStartDateTime for folding task
 func (task *taskFolding) setStartDateTime() {
-	value := task.machine.company.dateTime
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	task.baseSetStartDateTime()
 }
 
 // setStartDateTime for packing task
 func (task *taskPacking) setStartDateTime() {
-	value := task.machine.company.dateTime
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+	task.baseSetStartDateTime()
 }
