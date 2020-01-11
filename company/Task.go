@@ -183,6 +183,7 @@ func (task *Task) baseSetStartDateTime() {
 
 // setStartDateTime for rolling task
 func (task *taskRolling) setStartDateTime() {
+	// Modify logic in here as needed for rolling task
 	task.baseSetStartDateTime()
 }
 
