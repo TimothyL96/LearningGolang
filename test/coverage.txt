@@ -1,0 +1,15 @@
+mode: set
+github.com/ttimt/LearningGolang/test/main.go:9.13,12.2 2 0
+github.com/ttimt/LearningGolang/test/main.go:16.47,22.27 5 1
+github.com/ttimt/LearningGolang/test/main.go:27.2,33.16 5 1
+github.com/ttimt/LearningGolang/test/main.go:22.27,25.3 2 1
+github.com/ttimt/LearningGolang/test/main.go:37.88,38.38 1 1
+github.com/ttimt/LearningGolang/test/main.go:38.38,40.54 2 1
+github.com/ttimt/LearningGolang/test/main.go:43.3,43.25 1 1
+github.com/ttimt/LearningGolang/test/main.go:47.3,47.67 1 1
+github.com/ttimt/LearningGolang/test/main.go:40.54,42.4 1 1
+github.com/ttimt/LearningGolang/test/main.go:43.25,45.4 1 1
+github.com/ttimt/LearningGolang/test/main.go:56.34,58.2 0 0
+github.com/ttimt/LearningGolang/test/main.go:61.56,63.2 1 0
+github.com/ttimt/LearningGolang/test/main.go:66.29,68.2 0 0
+github.com/ttimt/LearningGolang/test/main.go:71.30,73.2 0 0
