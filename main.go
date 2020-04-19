@@ -106,7 +106,7 @@ func testCompany(company *DSCompany.Company) {
 			fmt.Println("Task end date time: ", t.EndDateTime())
 			fmt.Println("Task duration: ", t.Duration())
 			if t.TaskType() == 'R' {
-				fmt.Println(t.AsRolling().UniqueToRolling())
+				fmt.Println(t.AsTaskRolling().UniqueToRolling())
 			}
 			fmt.Println("\n***************************************")
 		}
@@ -118,13 +118,13 @@ func testCompany(company *DSCompany.Company) {
 	// Traverse(company, "Orders", func(order *DSCompany.Order) {
 	// 	fmt.Println("Order:", order.ID())
 	// 	fmt.Println("Knife setting of order:", order.KnifeSetting().Key())
-	// 	fmt.Println("Operation folding:")
+	// 	fmt.Println("BaseOperation folding:")
 	// 	fmt.Println(order.FirstOperation().Key())
 	// 	fmt.Println(order.FirstOperation().IsPlanned())
-	// 	fmt.Println("Operation packing:")
+	// 	fmt.Println("BaseOperation packing:")
 	// 	fmt.Println(order.LastOperation().Key())
 	// 	fmt.Println(order.LastOperation().IsPlanned())
-	// 	fmt.Println("Order.Operation.OrderID", order.LastOperation().Order().ID())
+	// 	fmt.Println("Order.BaseOperation.OrderID", order.LastOperation().Order().ID())
 	// })
 	//
 	// // Print knife settings and paper roll
@@ -132,11 +132,11 @@ func testCompany(company *DSCompany.Company) {
 	// 	ks.CreatePaperRoll(ks.Color(), ks.NumberOfCut()*ks.Repetition())
 	// 	fmt.Println("Knife setting:", ks.Key().String(), ks.Color())
 	// 	fmt.Println("Paper roll:", ks.PaperRoll().Key().String(), "Length:", ks.PaperRoll().Length())
-	// 	fmt.Println("Operation rolling:")
+	// 	fmt.Println("BaseOperation rolling:")
 	// 	fmt.Println(ks.PaperRoll().FirstOperation().Key())
 	// 	fmt.Println(ks.PaperRoll().FirstOperation().IsPlanned())
 	// 	fmt.Println(string(ks.PaperRoll().FirstOperation().OperationType()))
-	// 	fmt.Println("Operation cutting:")
+	// 	fmt.Println("BaseOperation cutting:")
 	// 	fmt.Println(ks.PaperRoll().LastOperation().Key())
 	// 	fmt.Println(ks.PaperRoll().LastOperation().IsPlanned())
 	// 	fmt.Println(string(ks.PaperRoll().LastOperation().OperationType()))

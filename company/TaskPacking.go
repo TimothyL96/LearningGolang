@@ -5,6 +5,6 @@ type taskPacking struct {
 	*BaseTask
 }
 
-func (task *taskPacking) AsPacking() *taskPacking {
+func (task *taskPacking) AsTaskPacking() *taskPacking {
 	return task
 }

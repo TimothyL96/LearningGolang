@@ -2,78 +2,50 @@ package company
 
 import (
 	"errors"
-
-	. "github.com/ttimt/LearningGolang/stdlib"
 )
 
-// specificOperation interface is the interface for all operations type.
+// Operation interface is the interface for all operations type.
 // This allows polymorphism for 1 operations type to other operations type
-type specificOperation interface {
-	PreviousOperation() *Operation
-	NextOperation() *Operation
-	PaperRoll() *PaperRoll
-	Order() *Order
+type Operation interface {
+	// Relations
+	PreviousOperation() Operation
+	NextOperation() Operation
+	Task() Task
+
+	// Get values
+	IsPlanned() bool
+	OperationType() byte
+
+	// Set
+	SetTask(task Task)
+	setPreviousOperation(operation Operation)
+	setNextOperation(operation Operation)
+	setIsPlanned(isPlanned bool)
+
+	// Conversion
+	AsOperationRollingCutting() *operationRollingCutting
+	AsOperationFoldingPacking() *operationFoldingPacking
+	AsOperationRolling() *operationRolling
+	AsOperationCutting() *operationCutting
+	AsOperationFolding() *operationFolding
+	AsOperationPacking() *operationPacking
 }
 
-// Operation struct is the struct for operations
-type Operation struct {
+// BaseOperation struct is the struct for operations
+type BaseOperation struct {
 	key
 	isPlanned     bool
 	operationType byte
 
-	// Subclass
-	specificOperation
-
 	// Relation
-	previousOperation *Operation
-	nextOperation     *Operation
+	previousOperation Operation
+	nextOperation     Operation
 
-	task *BaseTask
-}
-
-// operationRollingCutting is the base struct for rolling and cutting operations
-type operationRollingCutting struct {
-	specificOperation
-
-	// Owner
-	paperRoll *PaperRoll
-}
-
-// operationFoldingPacking is the base struct for folding and packing operations
-type operationFoldingPacking struct {
-	specificOperation
-
-	// Owner
-	order *Order
-}
-
-// operationRolling is the struct for rolling operations
-type operationRolling struct {
-	*Operation
-}
-
-// operationCutting is the struct for cutting operations
-type operationCutting struct {
-	*Operation
-}
-
-// operationFolding is the struct for folding operations
-type operationFolding struct {
-	*Operation
-}
-
-// operationPacking is the struct for packing operations
-type operationPacking struct {
-	*Operation
-}
-
-// setIsPlanned accepts a bool parameter and sets it to the operations isPlanned field
-func (op *Operation) setIsPlanned(isPlanned bool) {
-	op.isPlanned = isPlanned
+	task Task
 }
 
 // IsPlanned gets the isPlanned value of the operations
-func (op *Operation) IsPlanned() bool {
+func (op *BaseOperation) IsPlanned() bool {
 	if op == nil {
 		panic(errors.New("operation is null").Error())
 	}
@@ -82,7 +54,7 @@ func (op *Operation) IsPlanned() bool {
 }
 
 // OperationType returns the operation type of the operation
-func (op *Operation) OperationType() byte {
+func (op *BaseOperation) OperationType() byte {
 	if op == nil {
 		panic(errors.New("operation is null").Error())
 	}
@@ -91,7 +63,7 @@ func (op *Operation) OperationType() byte {
 }
 
 // PreviousOperation returns the first operations of the operations like rolling or folding
-func (op *Operation) PreviousOperation() *Operation {
+func (op *BaseOperation) PreviousOperation() Operation {
 	if op == nil {
 		return nil
 	}
@@ -100,7 +72,7 @@ func (op *Operation) PreviousOperation() *Operation {
 }
 
 // NextOperation returns the last operations of the operations like cutting or packing
-func (op *Operation) NextOperation() *Operation {
+func (op *BaseOperation) NextOperation() Operation {
 	if op == nil {
 		return nil
 	}
@@ -108,50 +80,8 @@ func (op *Operation) NextOperation() *Operation {
 	return op.nextOperation
 }
 
-// PaperRoll is the base method and returns the paper roll of the specific operations
-func (op *Operation) PaperRoll() *PaperRoll {
-	if op == nil {
-		return nil
-	}
-
-	// Check for recursive call and panic.
-	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
-		panic(errors.New(err).Error())
-	}
-
-	return op.specificOperation.PaperRoll()
-}
-
-// PaperRoll returns the paper roll of OperationRollingCutting
-func (op *operationRollingCutting) PaperRoll() *PaperRoll {
-	return op.paperRoll
-}
-
-// Order is the base method and returns the order of the specific operations
-func (op *Operation) Order() *Order {
-	if op == nil {
-		return nil
-	}
-
-	// Check for recursive call and panic.
-	if isInfinite, err := IsInfiniteRecursiveCall(); isInfinite {
-		panic(errors.New(err).Error())
-	}
-
-	return op.specificOperation.Order()
-}
-
-// Order returns the order of OperationFoldingCutting
-func (op *operationFoldingPacking) Order() *Order {
-	if op == nil {
-		return nil
-	}
-
-	return op.order
-}
-
 // BaseTask returns the task of the operations
-func (op *Operation) Task() *BaseTask {
+func (op *BaseOperation) Task() Task {
 	if op == nil {
 		return nil
 	}
@@ -159,17 +89,47 @@ func (op *Operation) Task() *BaseTask {
 	return op.task
 }
 
-// setTask sets the task for the current operation
-func (op *Operation) setTask(task *BaseTask) {
+// SetTask sets the task for the current operation
+func (op *BaseOperation) SetTask(task Task) {
 
 }
 
 // setPreviousOperation sets the first operations for the operations
-func (op *Operation) setPreviousOperation(operation *Operation) {
+func (op *BaseOperation) setPreviousOperation(operation Operation) {
 	op.previousOperation = operation
 }
 
 // setNextOperation sets the first operations for the operations
-func (op *Operation) setNextOperation(operation *Operation) {
+func (op *BaseOperation) setNextOperation(operation Operation) {
 	op.nextOperation = operation
+}
+
+// setIsPlanned accepts a bool parameter and sets it to the operations isPlanned field
+func (op *BaseOperation) setIsPlanned(isPlanned bool) {
+	op.isPlanned = isPlanned
+}
+
+// Base conversion
+func (op *BaseOperation) AsOperationRollingCutting() *operationRollingCutting {
+	return nil
+}
+
+func (op *BaseOperation) AsOperationFoldingPacking() *operationFoldingPacking {
+	return nil
+}
+
+func (op *BaseOperation) AsOperationRolling() *operationRolling {
+	return nil
+}
+
+func (op *BaseOperation) AsOperationCutting() *operationCutting {
+	return nil
+}
+
+func (op *BaseOperation) AsOperationFolding() *operationFolding {
+	return nil
+}
+
+func (op *BaseOperation) AsOperationPacking() *operationPacking {
+	return nil
 }

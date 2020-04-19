@@ -15,20 +15,19 @@ type Machine struct {
 	// Owner
 	company *Company
 
-	// Owning objects
-	tasks []Task
-
 	// Relation
+	// Owning objects
+	tasks     []Task
 	firstTask Task
 	lastTask  Task
 }
 
 // Set machine type in constant
 const (
-	rolling = 'R'
-	cutting = 'C'
-	folding = 'F'
-	packing = 'P'
+	Rolling = 'R'
+	Cutting = 'C'
+	Folding = 'F'
+	Packing = 'P'
 )
 
 // CreateTask method
@@ -73,29 +72,28 @@ func (machine *Machine) CreateTask(duration int) Task {
 	return task
 }
 
-// newTask creates a new specific task and assign it to the specific task field of the input *BaseTask
-//
+// newTask creates a new specific task.
 // Specific tasks are: rolling, cutting, folding, and packing task
 func (machine *Machine) newTask(task *BaseTask) Task {
 	var sTask Task
 
 	switch machine.machineType {
-	case rolling:
+	case Rolling:
 		sTask = &taskRolling{
 			task,
 		}
 
-	case cutting:
+	case Cutting:
 		sTask = &taskCutting{
 			task,
 		}
 
-	case folding:
+	case Folding:
 		sTask = &taskFolding{
 			task,
 		}
 
-	case packing:
+	case Packing:
 		sTask = &taskPacking{
 			task,
 		}
@@ -105,15 +103,6 @@ func (machine *Machine) newTask(task *BaseTask) Task {
 	}
 
 	return sTask
-}
-
-// Tasks returns all tasks owned by this machine
-func (machine *Machine) Tasks() []Task {
-	if machine == nil {
-		return nil
-	}
-
-	return machine.tasks
 }
 
 // Name returns the name of the machine
@@ -132,6 +121,24 @@ func (machine *Machine) Type() byte {
 	}
 
 	return machine.machineType
+}
+
+// Company returns the machine owner Company
+func (machine *Machine) Company() *Company {
+	if machine == nil {
+		return nil
+	}
+
+	return machine.company
+}
+
+// Tasks returns all tasks owned by this machine
+func (machine *Machine) Tasks() []Task {
+	if machine == nil {
+		return nil
+	}
+
+	return machine.tasks
 }
 
 // FirstTask returns the first task of the machine
@@ -160,10 +167,10 @@ func (machine *Machine) UnPlan() {
 
 }
 
-func (machine *Machine) moveBeforeTask() {
+func (machine *Machine) MoveBeforeTask() {
 
 }
 
-func (machine *Machine) moveAfterTask() {
+func (machine *Machine) MoveAfterTask() {
 
 }

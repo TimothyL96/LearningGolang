@@ -16,9 +16,9 @@ type PaperRoll struct {
 	knifeSetting *KnifeSetting
 
 	// Relation
-	operations     []*Operation
-	firstOperation *Operation
-	lastOperation  *Operation
+	operations     []Operation
+	firstOperation Operation
+	lastOperation  Operation
 }
 
 // Knife setting returns the owner of the paper roll
@@ -49,7 +49,7 @@ func (pr *PaperRoll) Color() int {
 }
 
 // Operations returns all the operations of the paper roll
-func (pr *PaperRoll) Operations() []*Operation {
+func (pr *PaperRoll) Operations() []Operation {
 	if pr == nil {
 		return nil
 	}
@@ -58,7 +58,7 @@ func (pr *PaperRoll) Operations() []*Operation {
 }
 
 // FirstOperation returns the rolling operation of the paper roll
-func (pr *PaperRoll) FirstOperation() *Operation {
+func (pr *PaperRoll) FirstOperation() Operation {
 	if pr == nil {
 		return nil
 	}
@@ -67,7 +67,7 @@ func (pr *PaperRoll) FirstOperation() *Operation {
 }
 
 // LastOperation returns the cutting operation of the paper roll
-func (pr *PaperRoll) LastOperation() *Operation {
+func (pr *PaperRoll) LastOperation() Operation {
 	if pr == nil {
 		return nil
 	}
@@ -75,15 +75,15 @@ func (pr *PaperRoll) LastOperation() *Operation {
 	return pr.lastOperation
 }
 
-// createOperation create rolling and cutting operations for this paper roll
-func (pr *PaperRoll) createOperation() []*Operation {
+// createOperations create rolling and cutting operations for this paper roll
+func (pr *PaperRoll) createOperations() []Operation {
 	operationRolling := pr.createOperationRolling()
 	operationCutting := pr.createOperationCutting()
 
 	operationRolling.setNextOperation(operationCutting)
 	operationCutting.setPreviousOperation(operationRolling)
 
-	operations := []*Operation{operationRolling, operationCutting}
+	operations := []Operation{operationRolling, operationCutting}
 
 	pr.operations = operations
 	pr.firstOperation = operationRolling
@@ -93,49 +93,37 @@ func (pr *PaperRoll) createOperation() []*Operation {
 }
 
 // createOperationRolling create rolling operations for this paper roll
-func (pr *PaperRoll) createOperationRolling() *Operation {
-	operation := &Operation{
-		key:               keyConfiguration.NewKey(),
-		isPlanned:         false,
-		operationType:     'R',
-		specificOperation: nil,
-		previousOperation: nil,
-		nextOperation:     nil,
-		task:              nil,
-	}
-
-	operationRolling := &operationRolling{
-		operation,
-	}
-
-	operation.specificOperation = &operationRollingCutting{
-		specificOperation: operationRolling,
-		paperRoll:         pr,
+func (pr *PaperRoll) createOperationRolling() Operation {
+	operation := &operationRolling{
+		pr.createOperation('R'),
 	}
 
 	return operation
 }
 
 // createOperationCutting create cutting operations for this paper roll
-func (pr *PaperRoll) createOperationCutting() *Operation {
-	operation := &Operation{
+func (pr *PaperRoll) createOperationCutting() Operation {
+	operation := &operationCutting{
+		pr.createOperation('C'),
+	}
+
+	return operation
+}
+
+func (pr *PaperRoll) createOperation(oType byte) *operationRollingCutting {
+	baseOperation := &BaseOperation{
 		key:               keyConfiguration.NewKey(),
 		isPlanned:         false,
-		operationType:     'C',
-		specificOperation: nil,
+		operationType:     oType,
 		previousOperation: nil,
 		nextOperation:     nil,
 		task:              nil,
 	}
 
-	operationRolling := &operationCutting{
-		operation,
+	rcOperation := &operationRollingCutting{
+		BaseOperation: baseOperation,
+		paperRoll:     pr,
 	}
 
-	operation.specificOperation = &operationRollingCutting{
-		specificOperation: operationRolling,
-		paperRoll:         pr,
-	}
-
-	return operation
+	return rcOperation
 }

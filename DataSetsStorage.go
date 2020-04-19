@@ -5,15 +5,15 @@ import (
 	"log"
 	"strings"
 
-	DScompany "github.com/ttimt/LearningGolang/company"
+	companyDataset "github.com/ttimt/LearningGolang/company"
 )
 
 // DataSetsStorage struct
 type DataSetsStorage struct {
-	Companies []*DScompany.Company
+	Companies []*companyDataset.Company
 }
 
-// DataSets abc
+// DataSets
 var DataSets DataSetsStorage
 
 // PrintAllDataSets prints
@@ -38,7 +38,7 @@ func createDataSet(DataSetKind string) interface{} {
 
 	switch strings.ToLower(DataSetKind) {
 	case "company":
-		DataSet = DScompany.CreateCompany(1.0, 0)
+		DataSet = companyDataset.CreateCompany(1.0, 0)
 	default:
 		log.Fatal("No such data set kind found!")
 	}

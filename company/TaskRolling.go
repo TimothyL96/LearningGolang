@@ -9,7 +9,7 @@ type taskRolling struct {
 	*BaseTask
 }
 
-func (task *taskRolling) AsRolling() *taskRolling {
+func (task *taskRolling) AsTaskRolling() *taskRolling {
 	return task
 }
 

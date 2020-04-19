@@ -5,6 +5,6 @@ type taskFolding struct {
 	*BaseTask
 }
 
-func (task *taskFolding) AsFolding() *taskFolding {
+func (task *taskFolding) AsTaskFolding() *taskFolding {
 	return task
 }

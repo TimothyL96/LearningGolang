@@ -39,7 +39,7 @@ func CreateCompany(version float32, dateTime int) *Company {
 //
 // Machine type can only be 'R', 'C', 'F', or 'P'
 func (company *Company) CreateMachine(name string, machineType byte) *Machine {
-	if isValid := company.IsValidMachineType(machineType); !isValid {
+	if isValid := IsValidMachineType(machineType); !isValid {
 		panic(errors.New("machine is being created with invalid type " + string(machineType)).Error())
 	}
 
@@ -94,14 +94,59 @@ func (company *Company) CreateOrder(id, color, quantity, dueDate, fulfilledQuant
 	company.orders = append(company.orders, order)
 
 	// Create operations for order
-	order.createOperation()
+	order.createOperations()
 
 	return order
 }
 
 // IsValidMachineType checks if the input machine type is valid (rolling, cutting, folding, or packing) and returns a bool
-func (company *Company) IsValidMachineType(machineType byte) bool {
-	return machineType == rolling || machineType == cutting || machineType == folding || machineType == packing
+func IsValidMachineType(machineType byte) bool {
+	return machineType == Rolling || machineType == Cutting || machineType == Folding || machineType == Packing
+}
+
+// Machines will return all machines owned by this company
+func (company *Company) Machines() []*Machine {
+	if company == nil {
+		return nil
+	}
+
+	return company.machines
+}
+
+// Orders will return all orders owned by this company
+func (company *Company) Orders() []*Order {
+	if company == nil {
+		return nil
+	}
+
+	return company.orders
+}
+
+// knifeSettings will return all knife settings owned by this company
+func (company *Company) KnifeSettings() []*KnifeSetting {
+	if company == nil {
+		return nil
+	}
+
+	return company.knifeSettings
+}
+
+// DateTime returns the date time of the company
+func (company *Company) DateTime() int {
+	if company == nil {
+		panic(errors.New("company is nil").Error())
+	}
+
+	return company.dateTime
+}
+
+// Version returns the version of the company
+func (company *Company) Version() float32 {
+	if company == nil {
+		panic(errors.New("company is nil").Error())
+	}
+
+	return company.version
 }
 
 // SetDateTime sets the date time for the company
@@ -111,19 +156,4 @@ func (company *Company) SetDateTime(dateTime int) {
 	for _, x := range company.machines {
 		x.firstTask.setStartDateTime()
 	}
-}
-
-// Machines will return all machines owned by this company
-func (company *Company) Machines() []*Machine {
-	return company.machines
-}
-
-// Orders will return all orders owned by this company
-func (company *Company) Orders() []*Order {
-	return company.orders
-}
-
-// knifeSettings will return all knife settings owned by this company
-func (company *Company) KnifeSettings() []*KnifeSetting {
-	return company.knifeSettings
 }

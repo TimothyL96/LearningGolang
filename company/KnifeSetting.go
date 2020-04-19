@@ -33,7 +33,7 @@ func (ks *KnifeSetting) CreatePaperRoll(color int, length int) *PaperRoll {
 	}
 
 	// Create operations for paper roll
-	paperRoll.createOperation()
+	paperRoll.createOperations()
 
 	// Append paper roll
 	ks.paperRoll = paperRoll
@@ -101,11 +101,11 @@ func (ks *KnifeSetting) AssignOrder(order *Order) {
 		panic(errors.New("knife setting max order reached").Error()) // constraint
 	}
 
-	order.setKnifeSetting(ks)
-	ks.setOrders(append(ks.Orders(), order))
+	order.SetKnifeSetting(ks)
+	ks.SetOrders(append(ks.Orders(), order))
 }
 
-// setOrders will set the orders to this knife setting
-func (ks *KnifeSetting) setOrders(orders []*Order) {
+// SetOrders will set the orders to this knife setting
+func (ks *KnifeSetting) SetOrders(orders []*Order) {
 	ks.orders = orders
 }

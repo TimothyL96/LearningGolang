@@ -20,9 +20,9 @@ type Order struct {
 
 	// Relation
 	knifeSetting   *KnifeSetting
-	operations     []*Operation
-	firstOperation *Operation
-	lastOperation  *Operation
+	operations     []Operation
+	firstOperation Operation
+	lastOperation  Operation
 }
 
 // Company returns the company of order
@@ -43,6 +43,33 @@ func (order *Order) KnifeSetting() *KnifeSetting {
 	return order.knifeSetting
 }
 
+// Operations returns all the operations
+func (order *Order) Operations() []Operation {
+	if order == nil {
+		return nil
+	}
+
+	return order.operations
+}
+
+// FirstOperation returns the folding operation
+func (order *Order) FirstOperation() Operation {
+	if order == nil {
+		return nil
+	}
+
+	return order.firstOperation
+}
+
+// LastOperation returns the packing operation
+func (order *Order) LastOperation() Operation {
+	if order == nil {
+		return nil
+	}
+
+	return order.lastOperation
+}
+
 // ID returns the id of order
 func (order *Order) ID() int {
 	if order == nil {
@@ -52,47 +79,56 @@ func (order *Order) ID() int {
 	return order.id
 }
 
-// Operations returns all the operations
-func (order *Order) Operations() []*Operation {
+// Color returns the color of order
+func (order *Order) Color() int {
 	if order == nil {
-		return nil
+		panic(errors.New("order is nil").Error())
 	}
 
-	return order.operations
+	return order.color
 }
 
-// FirstOperation returns the folding operation
-func (order *Order) FirstOperation() *Operation {
+// Quantity returns the quantity of order
+func (order *Order) Quantity() int {
 	if order == nil {
-		return nil
+		panic(errors.New("order is nil").Error())
 	}
 
-	return order.firstOperation
+	return order.quantity
 }
 
-// LastOperation returns the packing operation
-func (order *Order) LastOperation() *Operation {
+// DueDate returns the due date of order
+func (order *Order) DueDate() int {
 	if order == nil {
-		return nil
+		panic(errors.New("order is nil").Error())
 	}
 
-	return order.lastOperation
+	return order.dueDate
 }
 
-// setKnifeSetting will set a knife setting to this order
-func (order *Order) setKnifeSetting(ks *KnifeSetting) {
+// FulfilledQuantity returns the fulfilled quantity of order
+func (order *Order) FulfilledQuantity() int {
+	if order == nil {
+		panic(errors.New("order is nil").Error())
+	}
+
+	return order.fulfilledQuantity
+}
+
+// SetKnifeSetting will set a knife setting to this order
+func (order *Order) SetKnifeSetting(ks *KnifeSetting) {
 	order.knifeSetting = ks
 }
 
-// createOperation create rolling and cutting operations for this paper roll
-func (order *Order) createOperation() []*Operation {
+// createOperations create rolling and cutting operations for this paper roll
+func (order *Order) createOperations() []Operation {
 	operationFolding := order.createOperationFolding()
 	operationPacking := order.createOperationPacking()
 
 	operationFolding.setNextOperation(operationPacking)
 	operationPacking.setPreviousOperation(operationFolding)
 
-	operations := []*Operation{operationFolding, operationPacking}
+	operations := []Operation{operationFolding, operationPacking}
 
 	order.operations = operations
 	order.firstOperation = operationFolding
@@ -102,49 +138,37 @@ func (order *Order) createOperation() []*Operation {
 }
 
 // createOperationFolding create folding operation
-func (order *Order) createOperationFolding() *Operation {
-	operation := &Operation{
-		key:               keyConfiguration.NewKey(),
-		isPlanned:         false,
-		operationType:     'F',
-		specificOperation: nil,
-		previousOperation: nil,
-		nextOperation:     nil,
-		task:              nil,
-	}
-
-	operationFolding := &operationFolding{
-		operation,
-	}
-
-	operation.specificOperation = &operationFoldingPacking{
-		specificOperation: operationFolding,
-		order:             order,
+func (order *Order) createOperationFolding() Operation {
+	operation := &operationFolding{
+		order.createOperation('F'),
 	}
 
 	return operation
 }
 
 // createOperationPacking create packing operation
-func (order *Order) createOperationPacking() *Operation {
-	operation := &Operation{
+func (order *Order) createOperationPacking() Operation {
+	operation := &operationPacking{
+		order.createOperation('P'),
+	}
+
+	return operation
+}
+
+func (order *Order) createOperation(oType byte) *operationFoldingPacking {
+	baseOperation := &BaseOperation{
 		key:               keyConfiguration.NewKey(),
 		isPlanned:         false,
-		operationType:     'P',
-		specificOperation: nil,
+		operationType:     oType,
 		previousOperation: nil,
 		nextOperation:     nil,
 		task:              nil,
 	}
 
-	operationPacking := &operationPacking{
-		operation,
+	rcOperation := &operationFoldingPacking{
+		BaseOperation: baseOperation,
+		order:         order,
 	}
 
-	operation.specificOperation = &operationFoldingPacking{
-		specificOperation: operationPacking,
-		order:             order,
-	}
-
-	return operation
+	return rcOperation
 }

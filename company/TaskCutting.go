@@ -9,7 +9,7 @@ type taskCutting struct {
 	*BaseTask
 }
 
-func (task *taskCutting) AsCutting() *taskCutting {
+func (task *taskCutting) AsTaskCutting() *taskCutting {
 	return task
 }
 

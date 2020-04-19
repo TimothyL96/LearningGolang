@@ -36,10 +36,10 @@ type Task interface {
 	setEndDateTime()
 
 	// Conversion
-	AsRolling() *taskRolling
-	AsCutting() *taskCutting
-	AsFolding() *taskFolding
-	AsPacking() *taskPacking
+	AsTaskRolling() *taskRolling
+	AsTaskCutting() *taskCutting
+	AsTaskFolding() *taskFolding
+	AsTaskPacking() *taskPacking
 }
 
 // BaseTask is the base and main struct for task.
@@ -179,18 +179,18 @@ func (task *BaseTask) setEndDateTime() {
 }
 
 // Conversion Base for Interface
-func (task *BaseTask) AsRolling() *taskRolling {
+func (task *BaseTask) AsTaskRolling() *taskRolling {
 	return nil
 }
 
-func (task *BaseTask) AsCutting() *taskCutting {
+func (task *BaseTask) AsTaskCutting() *taskCutting {
 	return nil
 }
 
-func (task *BaseTask) AsFolding() *taskFolding {
+func (task *BaseTask) AsTaskFolding() *taskFolding {
 	return nil
 }
 
-func (task *BaseTask) AsPacking() *taskPacking {
+func (task *BaseTask) AsTaskPacking() *taskPacking {
 	return nil
 }
