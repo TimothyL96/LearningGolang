@@ -38,7 +38,7 @@ func createDataSet(DataSetKind string) interface{} {
 
 	switch strings.ToLower(DataSetKind) {
 	case "company":
-		DataSet = DScompany.CreateCompany(1.0, 123)
+		DataSet = DScompany.CreateCompany(1.0, 0)
 	default:
 		log.Fatal("No such data set kind found!")
 	}

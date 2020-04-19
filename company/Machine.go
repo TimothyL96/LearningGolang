@@ -16,11 +16,11 @@ type Machine struct {
 	company *Company
 
 	// Owning objects
-	tasks []*Task
+	tasks []Task
 
 	// Relation
-	firstTask *Task
-	lastTask  *Task
+	firstTask Task
+	lastTask  Task
 }
 
 // Set machine type in constant
@@ -32,8 +32,8 @@ const (
 )
 
 // CreateTask method
-func (machine *Machine) CreateTask(duration int) *Task {
-	task := &Task{
+func (machine *Machine) CreateTask(duration int) Task {
+	bTask := &BaseTask{
 		key:           keyConfiguration.NewKey(),
 		taskType:      machine.machineType,
 		duration:      duration,
@@ -44,7 +44,7 @@ func (machine *Machine) CreateTask(duration int) *Task {
 	}
 
 	// Create a specific task and add it to the new task instance
-	machine.newSpecificTask(task)
+	task := machine.newTask(bTask)
 
 	// Set first task
 	if len(machine.tasks) == 0 {
@@ -73,38 +73,42 @@ func (machine *Machine) CreateTask(duration int) *Task {
 	return task
 }
 
-// newSpecificTask creates a new specific task and assign it to the specific task field of the input *Task
+// newTask creates a new specific task and assign it to the specific task field of the input *BaseTask
 //
 // Specific tasks are: rolling, cutting, folding, and packing task
-func (machine *Machine) newSpecificTask(task *Task) {
+func (machine *Machine) newTask(task *BaseTask) Task {
+	var sTask Task
+
 	switch machine.machineType {
 	case rolling:
-		task.specificTask = &taskRolling{
-			Task: task,
+		sTask = &taskRolling{
+			task,
 		}
 
 	case cutting:
-		task.specificTask = &taskCutting{
-			Task: task,
+		sTask = &taskCutting{
+			task,
 		}
 
 	case folding:
-		task.specificTask = &taskFolding{
-			Task: task,
+		sTask = &taskFolding{
+			task,
 		}
 
 	case packing:
-		task.specificTask = &taskPacking{
-			Task: task,
+		sTask = &taskPacking{
+			task,
 		}
 
 	default:
 		panic(errors.New("machine has invalid type:" + string(machine.machineType)).Error())
 	}
+
+	return sTask
 }
 
 // Tasks returns all tasks owned by this machine
-func (machine *Machine) Tasks() []*Task {
+func (machine *Machine) Tasks() []Task {
 	if machine == nil {
 		return nil
 	}
@@ -131,7 +135,7 @@ func (machine *Machine) Type() byte {
 }
 
 // FirstTask returns the first task of the machine
-func (machine *Machine) FirstTask() *Task {
+func (machine *Machine) FirstTask() Task {
 	if machine == nil {
 		return nil
 	}
@@ -140,7 +144,7 @@ func (machine *Machine) FirstTask() *Task {
 }
 
 // LastTask returns the last task of the machine
-func (machine *Machine) LastTask() *Task {
+func (machine *Machine) LastTask() Task {
 	if machine == nil {
 		return nil
 	}
