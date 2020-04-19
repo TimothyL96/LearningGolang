@@ -9,31 +9,31 @@ import (
 
 // Task interface registers all methods of task
 type Task interface {
-	// Declarative functions
-	setStartDateTime()
-	setEndDateTime()
+	// Key
+	Key() *keyConfiguration.BaseKey
 
-	// Set values
-	SetDuration(duration int)
+	// Get relations
+	Super() *BaseTask
+	Machine() *Machine
+	PreviousTask() Task
+	NextTask() Task
+
+	// Get values
+	TaskType() byte
+	Duration() int
+	StartDateTime() int
+	EndDateTime() int
 
 	// Set relations
 	SetPreviousTask(Task)
 	SetNextTask(Task)
 
-	// Key
-	Key() *keyConfiguration.BaseKey
+	// Set values
+	SetDuration(duration int)
 
-	// Get values
-	StartDateTime() int
-	EndDateTime() int
-	TaskType() byte
-	Duration() int
-
-	// Get relations
-	Super() *BaseTask
-	PreviousTask() Task
-	NextTask() Task
-	Machine() *Machine
+	// Declarative functions
+	setStartDateTime()
+	setEndDateTime()
 
 	// Conversion
 	AsRolling() *taskRolling
@@ -125,20 +125,9 @@ func (task *BaseTask) Machine() *Machine {
 	return task.machine
 }
 
-// setEndDateTime is a declarative function that gets called when any of its binding is changed.
-// Set the task end date time based on the summation of the task start date time and duration
-func (task *BaseTask) setEndDateTime() {
-	if task == nil {
-		return
-	}
-
-	value := task.StartDateTime() + task.Duration()
-
-	var funcToPass []func()
-	if task.NextTask() != nil {
-		funcToPass = append(funcToPass, task.NextTask().setStartDateTime)
-	}
-	CalcDeclarative(&task.endDateTime, &value, funcToPass...)
+// Get base task
+func (task *BaseTask) Super() *BaseTask {
+	return task.BaseTask
 }
 
 // SetDuration sets the task duration from the parameter
@@ -162,11 +151,6 @@ func (task *BaseTask) SetPreviousTask(newTask Task) {
 	task.previousTask = newTask
 }
 
-// Get base task
-func (task *BaseTask) Super() *BaseTask {
-	return task.BaseTask
-}
-
 // Base set start date time
 func (task *BaseTask) setStartDateTime() {
 	value := task.machine.company.dateTime
@@ -176,6 +160,22 @@ func (task *BaseTask) setStartDateTime() {
 	}
 
 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+}
+
+// setEndDateTime is a declarative function that gets called when any of its binding is changed.
+// Set the task end date time based on the summation of the task start date time and duration
+func (task *BaseTask) setEndDateTime() {
+	if task == nil {
+		return
+	}
+
+	value := task.StartDateTime() + task.Duration()
+
+	var funcToPass []func()
+	if task.NextTask() != nil {
+		funcToPass = append(funcToPass, task.NextTask().setStartDateTime)
+	}
+	CalcDeclarative(&task.endDateTime, &value, funcToPass...)
 }
 
 // Conversion Base for Interface
