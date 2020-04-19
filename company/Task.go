@@ -14,17 +14,23 @@ type Task interface {
 	setEndDateTime()
 
 	// Set values
-	SetPreviousTask(Task)
-	SetNextTask(Task)
 	SetDuration(duration int)
 
-	// Get values
+	// Set relations
+	SetPreviousTask(Task)
+	SetNextTask(Task)
+
+	// Key
 	Key() *keyConfiguration.BaseKey
-	Super() *BaseTask
-	EndDateTime() int
+
+	// Get values
 	StartDateTime() int
+	EndDateTime() int
 	TaskType() byte
 	Duration() int
+
+	// Get relations
+	Super() *BaseTask
 	PreviousTask() Task
 	NextTask() Task
 	Machine() *Machine
@@ -54,26 +60,6 @@ type BaseTask struct {
 	// Relation
 	previousTask Task
 	nextTask     Task
-}
-
-// taskRolling is the struct for rolling task
-type taskRolling struct {
-	*BaseTask
-}
-
-// taskCutting is the struct for cutting task
-type taskCutting struct {
-	*BaseTask
-}
-
-// taskFolding is the struct for folding task
-type taskFolding struct {
-	*BaseTask
-}
-
-// taskPacking is the struct for packing task
-type taskPacking struct {
-	*BaseTask
 }
 
 // StartDateTime returns the start date time of the task
@@ -192,7 +178,7 @@ func (task *BaseTask) setStartDateTime() {
 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
-// Conversion Base
+// Conversion Base for Interface
 func (task *BaseTask) AsRolling() *taskRolling {
 	return nil
 }
@@ -207,51 +193,4 @@ func (task *BaseTask) AsFolding() *taskFolding {
 
 func (task *BaseTask) AsPacking() *taskPacking {
 	return nil
-}
-
-// End Base Conversion
-
-func (task *taskRolling) AsRolling() *taskRolling {
-	return task
-}
-
-func (task *taskCutting) AsCutting() *taskCutting {
-	return task
-}
-
-func (task *taskFolding) AsFolding() *taskFolding {
-	return task
-}
-
-func (task *taskPacking) AsPacking() *taskPacking {
-	return task
-}
-
-// Overrides for set start date time
-// setStartDateTime for rolling task
-func (task *taskRolling) setStartDateTime() {
-	// Modify logic in here as needed for rolling task
-	value := task.machine.company.dateTime + 123
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
-}
-
-// setStartDateTime for cutting task
-func (task *taskCutting) setStartDateTime() {
-	value := task.machine.company.dateTime + 456
-
-	if task.PreviousTask() != nil {
-		value = task.PreviousTask().EndDateTime()
-	}
-
-	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
-}
-
-// Unique methods
-func (task *taskRolling) UniqueToRolling() string {
-	return "Im unique to task rolling only!"
 }
