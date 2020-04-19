@@ -8,7 +8,7 @@ import (
 
 // Map the Key struct from key package to the type key so it will be unexported
 // (instead of using keyword interface 'Key' where it will become exported if used)
-type key = *keyConfiguration.Key
+type key = keyConfiguration.Key
 
 // Company struct represents the root instance of the dataset
 type Company struct {
