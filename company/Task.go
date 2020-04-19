@@ -28,6 +28,12 @@ type Task interface {
 	PreviousTask() Task
 	NextTask() Task
 	Machine() *Machine
+
+	// Conversion
+	AsRolling() *taskRolling
+	AsCutting() *taskCutting
+	AsFolding() *taskFolding
+	AsPacking() *taskPacking
 }
 
 // BaseTask is the base and main struct for task.
@@ -175,6 +181,7 @@ func (task *BaseTask) Super() *BaseTask {
 	return task.BaseTask
 }
 
+// Base set start date time
 func (task *BaseTask) setStartDateTime() {
 	value := task.machine.company.dateTime
 
@@ -185,6 +192,42 @@ func (task *BaseTask) setStartDateTime() {
 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
 }
 
+// Conversion Base
+func (task *BaseTask) AsRolling() *taskRolling {
+	return nil
+}
+
+func (task *BaseTask) AsCutting() *taskCutting {
+	return nil
+}
+
+func (task *BaseTask) AsFolding() *taskFolding {
+	return nil
+}
+
+func (task *BaseTask) AsPacking() *taskPacking {
+	return nil
+}
+
+// End Base Conversion
+
+func (task *taskRolling) AsRolling() *taskRolling {
+	return task
+}
+
+func (task *taskCutting) AsCutting() *taskCutting {
+	return task
+}
+
+func (task *taskFolding) AsFolding() *taskFolding {
+	return task
+}
+
+func (task *taskPacking) AsPacking() *taskPacking {
+	return task
+}
+
+// Overrides for set start date time
 // setStartDateTime for rolling task
 func (task *taskRolling) setStartDateTime() {
 	// Modify logic in here as needed for rolling task
@@ -206,4 +249,9 @@ func (task *taskCutting) setStartDateTime() {
 	}
 
 	CalcDeclarative(&task.startDateTime, &value, task.setEndDateTime)
+}
+
+// Unique methods
+func (task *taskRolling) UniqueToRolling() string {
+	return "Im unique to task rolling only!"
 }

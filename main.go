@@ -104,6 +104,10 @@ func testCompany(company *DSCompany.Company) {
 			fmt.Printf("Task type with %%T: %T\n", t)
 			fmt.Println("Task start date time: ", t.StartDateTime())
 			fmt.Println("Task end date time: ", t.EndDateTime())
+			fmt.Println("Task duration: ", t.Duration())
+			if t.TaskType() == 'R' {
+				fmt.Println(t.AsRolling().UniqueToRolling())
+			}
 			fmt.Println("\n***************************************")
 		}
 	}
